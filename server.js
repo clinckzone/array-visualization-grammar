@@ -2,7 +2,7 @@ let express = require("express");
 let server = express();
 
 server.use(express.static(__dirname + "/dist"));
-server.use(express.static(__dirname + "/css"));
+server.use(express.static(__dirname + "/styles"));
 server.use(express.static(__dirname + "/views"));
 
 server.get("/", function(req, res) {

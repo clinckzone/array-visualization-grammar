@@ -15,7 +15,8 @@
     "lodash": "^4.17.21",
     "path": "^0.12.7",
     "pug": "^3.0.2",
-    "stylus": "^0.54.8"
+    "stylus": "^0.54.8",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "webpack": "^5.44.0",
