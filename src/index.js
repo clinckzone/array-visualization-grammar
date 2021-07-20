@@ -1,12 +1,54 @@
 //@ts-check
-import { ArrayDiagram } from "./Diagrams/ArrayDiagram";
-import * as d3 from "d3";
+import { FunctionAnimationSpec } from "./Specification/FunctionAnimationSpec";
 
-let data = [10, 22, 31, 14, 25];
-let properties = {ITEM_SIZE: 30, PADDING: 10};
+// Example JSON specs
+let rawSpec_pop = {
+    callee: "pop",
+    args: [{ name: "self", value: [1, 2, 3, 4, 5], type: "array" }]
+};
 
-let arrayDiagram = new ArrayDiagram(data, properties);
-arrayDiagram.update();
+let rawSpec_push = {
+    callee: "push",
+    args: 
+        [
+            { name: "self", value: [1, 2, 3, 4, 5], type: "array" },
+            { name: "element", value: 28, type: "number" }
+        ]
+};
 
-d3.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
-d3.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));
+let rawSpec_shift = {
+    callee: "shift",
+    args: [{ name: "self", value: [1, 2, 3, 4, 5], type: "array" }]
+};
+
+let rawSpec_unshift = {
+    callee: "unshift",
+    args: 
+        [
+            { name: "self", value: [1, 2, 3, 4, 5], type: "array" },
+            { name: "element", value: 28, type: "number" }
+        ]
+};
+
+const functionAnimationSpec = new FunctionAnimationSpec(rawSpec_unshift);
+functionAnimationSpec.compile();
+
+console.log(functionAnimationSpec);
+
+// Load JSON
+// let rawSpec = {
+//     callee: "pop",
+//     args: [
+//         { name: "self", value: [1, 2, 3, 4, 5], type: "array" },
+//         { name: "start", value: 0, type: "number" },
+//         { name: "deleteCount", value: 6, type: "number" }
+//     ],
+//     animations: {
+//         data: "$self",
+//         select: {
+//             begin: "$start",
+//             end: "$start + $count"
+//         },
+//         animation: [{type: "highlight"}, {type: "delete"}]
+//     }
+// };
