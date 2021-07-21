@@ -10,22 +10,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ArrayDiagram": () => (/* binding */ ArrayDiagram)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(565);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(565);
+/* harmony import */ var _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(570);
+/* harmony import */ var _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(571);
 //@ts-check
 
  
+
+
 
 class ArrayDiagram {
     
     /**
      * @param {Array} data
-     * @param {Object} properties
      */
-    constructor(data, properties) {
+    constructor(data) {
         this.data = data.map((value) => this.bindToKey(value));
-        this.properties = properties;
-        this.svg = this.initialize();
+        
         this.TRANSITION_TIME = 1000;
+        this.ITEM_SIZE = 30;
+        this.PADDING = 10;
+
+        this.svg = this.initialize();
     }
 
     /**
@@ -36,7 +42,7 @@ class ArrayDiagram {
     bindToKey(value) {
         return {
             value: value,
-            key: (0,uuid__WEBPACK_IMPORTED_MODULE_1__.default)()
+            key: (0,uuid__WEBPACK_IMPORTED_MODULE_3__.default)()
         };
     }
 
@@ -45,11 +51,11 @@ class ArrayDiagram {
         //Create a svg container for the array diagram
         let svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#diagram-container")
         .append("svg")
-        .attr("height", this.properties.ITEM_SIZE + this.properties.PADDING) 
+        .attr("height", this.ITEM_SIZE + this.PADDING) 
         .style("border-left", "1px solid rgba(0, 0, 0, 0.1)")
         .style("border-right", "1px solid rgba(0, 0, 0, 0.1)")
-        .style("margin-left", `${this.properties.PADDING}`)
-        .style("margin-right", `${this.properties.PADDING}`);
+        .style("margin-left", `${this.PADDING}`)
+        .style("margin-right", `${this.PADDING}`);
 
         return svg;
     }
@@ -59,96 +65,20 @@ class ArrayDiagram {
         this.svg
         .transition()
         .duration(this.TRANSITION_TIME)
-        .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING);
-
+        .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
+        
         //Update svg elements
         this.svg
         .selectAll("g")
         .data(this.data, (data) => data.key)
-        .join(this.addElements.bind(this), this.updateElements.bind(this), this.removeElements.bind(this));
-    }
-
-    addElements(selection) {
-        let elemEnter = selection
-        .append("g")
-        .attr("transform", (data, index) => `translate(${(this.properties.ITEM_SIZE + this.properties.PADDING) * (index + 0.5) + this.properties.PADDING / 2}, ${(this.properties.ITEM_SIZE + this.properties.PADDING) / 2})`);
-        
-        elemEnter
-        .append("rect")
-        .style("fill", "#befcb3")
-        .transition()
-        .duration(this.TRANSITION_TIME/2)
-        .attr("width", this.properties.ITEM_SIZE)
-        .attr("height", this.properties.ITEM_SIZE)
-        .attr("x", -this.properties.ITEM_SIZE / 2)
-        .attr("y", -this.properties.ITEM_SIZE / 2)
-        .attr("rx", 5)
-        .transition()
-        .duration(this.TRANSITION_TIME)
-        .style("fill", "#dfe5e8")
-
-        elemEnter
-        .append("text")
-        .style("font-size", "0px")
-        .style("font-family", "Fira Code, sans-serif")
-        .style("dominant-baseline", "middle")
-        .style("text-anchor", "middle")
-        .transition()
-        .duration(this.TRANSITION_TIME/2)
-        .style("font-size", "14px")
-        .text((data) => data.value);
-
-        return elemEnter;
-    }
-
-    updateElements(selection) {
-        let updateElem = selection
-        .transition()
-        .duration(this.TRANSITION_TIME/2)
-        .attr("transform", (data, index) => `translate(${(this.properties.ITEM_SIZE + this.properties.PADDING) * (index + 0.5) + this.properties.PADDING / 2}, ${(this.properties.ITEM_SIZE + this.properties.PADDING) / 2})`);
-        
-        return updateElem;
-    }
-
-    removeElements(selection) {
-        /**
-         * Used sort of a hack to get around the problem of 
-         * triggering transitions in chain. I want to come up
-         * with a more concrete and independent implementation.
-         **/
-
-        let removeElem = selection
-        .transition()
-        .duration(1*this.TRANSITION_TIME);
-
-        selection
-        .selectAll("rect")
-        .transition()
-        .duration(this.TRANSITION_TIME/3)
-        .attr("width", this.properties.ITEM_SIZE*1.1)
-        .attr("height", this.properties.ITEM_SIZE*1.1)
-        .attr("x", -this.properties.ITEM_SIZE*1.1 / 2)
-        .attr("y", -this.properties.ITEM_SIZE*1.1 / 2)
-        .style("fill", "#f9aeb7")
-        .transition()
-        .duration(this.TRANSITION_TIME/2)
-        .attr("width", 0)
-        .attr("height", 0)
-        .attr("x", 0)
-        .attr("y", 0)
-        .style("opacity", 0.0);
-
-        selection
-        .selectAll("text")
-        .transition()
-        .duration(this.TRANSITION_TIME/4)
-        .style("font-size", "18px")
-        .transition()
-        .duration(this.TRANSITION_TIME/2)
-        .style("font-size", "0px")
-        .style("opacity", 0.0);
-
-        return removeElem.remove();
+        .join(
+            enter => _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this), 
+            update => update
+            .transition()
+            .duration(this.TRANSITION_TIME/2)
+            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING / 2}, ${(this.ITEM_SIZE + this.PADDING) / 2})`),
+            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_2__.RemoveArrayElements.removeElements(exit, this)
+        );
     }
 
     push() {
@@ -31151,6 +31081,122 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i);
 
+/***/ }),
+/* 570 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AddArrayElement": () => (/* binding */ AddArrayElement)
+/* harmony export */ });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+//@ts-check
+
+
+
+class AddArrayElement {
+    
+    /**
+     * @param {d3.Selection} selection 
+     * @param {ArrayDiagram} context 
+     * @returns {d3.Selection}
+     */
+    static addElement(selection, context) {
+        let elemEnter = selection
+        .append("g")
+        .attr("transform", (data, index) => `translate(${(context.ITEM_SIZE + context.PADDING) * (index + 0.5) + context.PADDING / 2}, ${(context.ITEM_SIZE + context.PADDING) / 2})`);
+
+        elemEnter
+        .append("rect")
+        .style("fill", "#befcb3")
+        .transition()
+        .duration(context.TRANSITION_TIME)
+        .attr("width", context.ITEM_SIZE)
+        .attr("height", context.ITEM_SIZE)
+        .attr("x", -context.ITEM_SIZE / 2)
+        .attr("y", -context.ITEM_SIZE / 2)
+        .attr("rx", 5)
+        .transition()
+        .duration(context.TRANSITION_TIME)
+        .style("fill", "#dfe5e8");
+
+        elemEnter
+        .append("text")
+        .style("font-size", "0px")
+        .style("font-family", "Fira Code, sans-serif")
+        .style("dominant-baseline", "middle")
+        .style("text-anchor", "middle")
+        .transition()
+        .duration(context.TRANSITION_TIME)
+        .style("font-size", "14px")
+        .text((data) => data.value);
+
+        return elemEnter;
+    }
+}
+
+
+/***/ }),
+/* 571 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemoveArrayElements": () => (/* binding */ RemoveArrayElements)
+/* harmony export */ });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+//@ts-check
+
+
+
+class RemoveArrayElements {
+
+    /**
+     * @param {d3.Selection} selection 
+     * @param {ArrayDiagram} context 
+     * @returns {d3.Transition}
+     */
+    static removeElements(selection, context) {
+        let removeElem = selection
+        .transition()
+        .duration(0);
+
+        removeElem
+        .selectAll("rect")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .attr("width", context.ITEM_SIZE*1.1)
+        .attr("height", context.ITEM_SIZE*1.1)
+        .attr("x", -context.ITEM_SIZE*1.1 / 2)
+        .attr("y", -context.ITEM_SIZE*1.1 / 2)
+        .style("fill", "#f9aeb7")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("opacity", 0.0)
+        .attr("width", 0)
+        .attr("height", 0)
+        .attr("x", 0)
+        .attr("y", 0);
+
+        removeElem
+        .selectAll("text")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("font-size", "18px")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("font-size", "0px")
+        .style("opacity", 0.0);
+
+        return removeElem
+        .delay(2*context.TRANSITION_TIME)
+        .remove();
+    } 
+}
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -31219,9 +31265,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let data = [10, 22, 31, 14, 25];
-let properties = {ITEM_SIZE: 30, PADDING: 10};
 
-let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data, properties);
+let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data);
 arrayDiagram.update();
 
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
