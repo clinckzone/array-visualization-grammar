@@ -9,3 +9,4 @@ arrayDiagram.update();
 
 d3.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
 d3.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));
+d3.select("#search").on("click", arrayDiagram.search.bind(arrayDiagram));

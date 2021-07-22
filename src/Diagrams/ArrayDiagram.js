@@ -2,7 +2,8 @@
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid"; 
 import { AddArrayElement } from "../Animations/ArrayAnimations/AddArrayElement";
-import { RemoveArrayElements } from "../Animations/ArrayAnimations/RemoveArrayElement";
+import { HighlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
+import { RemoveArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
 
 export class ArrayDiagram {
     
@@ -52,7 +53,7 @@ export class ArrayDiagram {
         .transition()
         .duration(this.TRANSITION_TIME)
         .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
-        
+
         //Update svg elements
         this.svg
         .selectAll("g")
@@ -62,18 +63,34 @@ export class ArrayDiagram {
             update => update
             .transition()
             .duration(this.TRANSITION_TIME/2)
-            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING / 2}, ${(this.ITEM_SIZE + this.PADDING) / 2})`),
-            exit => RemoveArrayElements.removeElements(exit, this)
+            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2}, ${(this.ITEM_SIZE + this.PADDING)/2})`),
+            exit => RemoveArrayElement.removeElement(exit, this)
         );
     }
 
     push() {
-        this.data.unshift(this.bindToKey(Math.ceil(Math.random()*50)));
+        this.data.push(this.bindToKey(Math.ceil(Math.random()*50)));
         this.update();
     }
 
     pop() {
         this.data.pop();
         this.update();
+    }
+
+    search() {
+        //Get the position of the element in the array
+        let tillThisIndex = this.data.findIndex(
+            // @ts-ignore
+            element => (element.value == document.getElementById('searchElement').value
+            ));
+
+        //If its not there then just go through all the elements
+        if(tillThisIndex === -1) {
+            tillThisIndex = this.data.length - 1;
+        }
+
+        const selection = d3.selectAll("svg");
+        HighlightArrayElement.hightlightElement(selection, this, tillThisIndex);
     }
 }

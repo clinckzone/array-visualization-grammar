@@ -10,12 +10,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ArrayDiagram": () => (/* binding */ ArrayDiagram)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(565);
-/* harmony import */ var _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(570);
-/* harmony import */ var _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(571);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(568);
+/* harmony import */ var _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(565);
+/* harmony import */ var _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(566);
+/* harmony import */ var _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(567);
 //@ts-check
 
  
+
 
 
 
@@ -42,7 +44,7 @@ class ArrayDiagram {
     bindToKey(value) {
         return {
             value: value,
-            key: (0,uuid__WEBPACK_IMPORTED_MODULE_3__.default)()
+            key: (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)()
         };
     }
 
@@ -66,7 +68,7 @@ class ArrayDiagram {
         .transition()
         .duration(this.TRANSITION_TIME)
         .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
-        
+
         //Update svg elements
         this.svg
         .selectAll("g")
@@ -76,19 +78,35 @@ class ArrayDiagram {
             update => update
             .transition()
             .duration(this.TRANSITION_TIME/2)
-            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING / 2}, ${(this.ITEM_SIZE + this.PADDING) / 2})`),
-            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_2__.RemoveArrayElements.removeElements(exit, this)
+            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2}, ${(this.ITEM_SIZE + this.PADDING)/2})`),
+            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this)
         );
     }
 
     push() {
-        this.data.unshift(this.bindToKey(Math.ceil(Math.random()*50)));
+        this.data.push(this.bindToKey(Math.ceil(Math.random()*50)));
         this.update();
     }
 
     pop() {
         this.data.pop();
         this.update();
+    }
+
+    search() {
+        //Get the position of the element in the array
+        let tillThisIndex = this.data.findIndex(
+            // @ts-ignore
+            element => (element.value == document.getElementById('searchElement').value
+            ));
+
+        //If its not there then just go through all the elements
+        if(tillThisIndex === -1) {
+            tillThisIndex = this.data.length - 1;
+        }
+
+        const selection = d3__WEBPACK_IMPORTED_MODULE_0__.selectAll("svg");
+        _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__.HighlightArrayElement.hightlightElement(selection, this, tillThisIndex);
     }
 }
 
@@ -30957,10 +30975,182 @@ function nopropagation(event) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AddArrayElement": () => (/* binding */ AddArrayElement)
+/* harmony export */ });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+//@ts-check
+
+
+
+class AddArrayElement {
+    
+    /**
+     * @param {d3.Selection} selection 
+     * @param {ArrayDiagram} context 
+     * @returns {d3.Selection}
+     */
+    static addElement(selection, context) {
+        let elemEnter = selection
+        .append("g")
+        .attr("transform", (data, index) => `translate(${(context.ITEM_SIZE + context.PADDING) * (index + 0.5) + context.PADDING/2}, ${(context.ITEM_SIZE + context.PADDING)/2})`);
+
+        elemEnter
+        .append("rect")
+        .style("fill", "#befcb3")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .attr("width", context.ITEM_SIZE)
+        .attr("height", context.ITEM_SIZE)
+        .attr("x", -context.ITEM_SIZE/2)
+        .attr("y", -context.ITEM_SIZE/2)
+        .attr("rx", 5)
+        .transition()
+        .duration(context.TRANSITION_TIME)
+        .style("fill", "#dfe5e8");
+
+        elemEnter
+        .append("text")
+        .style("font-size", "0px")
+        .style("font-family", "Fira Code, sans-serif")
+        .style("dominant-baseline", "middle")
+        .style("text-anchor", "middle")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("font-size", "14px")
+        .text((data) => data.value);
+
+        return elemEnter;
+    }
+}
+
+
+/***/ }),
+/* 566 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "HighlightArrayElement": () => (/* binding */ HighlightArrayElement)
+/* harmony export */ });
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+
+
+
+//@ts-check
+class HighlightArrayElement {
+
+    /**
+     * @param {d3.Selection} selection 
+     * @param {ArrayDiagram} context 
+     */
+    static hightlightElement(selection, context, tillThisIndex) {
+
+        //Selection here represents an array of groups within the svg.
+        selection
+        .selectAll("rect")
+        .filter((data, index) => index <= tillThisIndex)
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .delay((data, index) => index*1000)
+        .attr("width", context.ITEM_SIZE*1.1)
+        .attr("height", context.ITEM_SIZE*1.1)
+        .attr("x", -context.ITEM_SIZE*1.1/2)
+        .attr("y", -context.ITEM_SIZE*1.1/2)
+        .style("fill", "#99d8fc")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("fill", "#dfe5e8")
+        .attr("width", context.ITEM_SIZE)
+        .attr("height", context.ITEM_SIZE)
+        .attr("x", -context.ITEM_SIZE/2)
+        .attr("y", -context.ITEM_SIZE/2);
+
+        selection
+        .selectAll("text")
+        .filter((data, index) => index <= tillThisIndex)
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .delay((data, index) => index*1000)
+        .style("font-size", "16px")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("font-size", "14px");
+    }
+}
+
+
+/***/ }),
+/* 567 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RemoveArrayElement": () => (/* binding */ RemoveArrayElement)
+/* harmony export */ });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+//@ts-check
+
+
+
+class RemoveArrayElement {
+
+    /**
+     * @param {d3.Selection} selection 
+     * @param {ArrayDiagram} context 
+     * @returns {d3.Transition}
+     */
+    static removeElement(selection, context) {
+        let removeElem = selection
+        .transition()
+        .duration(0);
+
+        removeElem
+        .selectAll("rect")
+        .transition()
+        .duration(context.TRANSITION_TIME/4)
+        .attr("width", context.ITEM_SIZE*1.1)
+        .attr("height", context.ITEM_SIZE*1.1)
+        .attr("x", -context.ITEM_SIZE*1.1/2)
+        .attr("y", -context.ITEM_SIZE*1.1/2)
+        .style("fill", "#f9aeb7")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("opacity", 0.0)
+        .attr("width", 0)
+        .attr("height", 0)
+        .attr("x", 0)
+        .attr("y", 0);
+
+        removeElem
+        .selectAll("text")
+        .transition()
+        .duration(context.TRANSITION_TIME/4)
+        .style("font-size", "18px")
+        .transition()
+        .duration(context.TRANSITION_TIME/2)
+        .style("font-size", "0px")
+        .style("opacity", 0.0);
+
+        return removeElem
+        .delay(context.TRANSITION_TIME)
+        .remove();
+    } 
+}
+
+
+/***/ }),
+/* 568 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(566);
-/* harmony import */ var _stringify_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(567);
+/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(569);
+/* harmony import */ var _stringify_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(570);
 
 
 
@@ -30987,7 +31177,7 @@ function v4(options, buf, offset) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (v4);
 
 /***/ }),
-/* 566 */
+/* 569 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31015,14 +31205,14 @@ function rng() {
 }
 
 /***/ }),
-/* 567 */
+/* 570 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(568);
+/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(571);
 
 /**
  * Convert array of 16 byte values to UUID string format of the form:
@@ -31055,14 +31245,14 @@ function stringify(arr) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (stringify);
 
 /***/ }),
-/* 568 */
+/* 571 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _regex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(569);
+/* harmony import */ var _regex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(572);
 
 
 function validate(uuid) {
@@ -31072,7 +31262,7 @@ function validate(uuid) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (validate);
 
 /***/ }),
-/* 569 */
+/* 572 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31080,122 +31270,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i);
-
-/***/ }),
-/* 570 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AddArrayElement": () => (/* binding */ AddArrayElement)
-/* harmony export */ });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-//@ts-check
-
-
-
-class AddArrayElement {
-    
-    /**
-     * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
-     * @returns {d3.Selection}
-     */
-    static addElement(selection, context) {
-        let elemEnter = selection
-        .append("g")
-        .attr("transform", (data, index) => `translate(${(context.ITEM_SIZE + context.PADDING) * (index + 0.5) + context.PADDING / 2}, ${(context.ITEM_SIZE + context.PADDING) / 2})`);
-
-        elemEnter
-        .append("rect")
-        .style("fill", "#befcb3")
-        .transition()
-        .duration(context.TRANSITION_TIME)
-        .attr("width", context.ITEM_SIZE)
-        .attr("height", context.ITEM_SIZE)
-        .attr("x", -context.ITEM_SIZE / 2)
-        .attr("y", -context.ITEM_SIZE / 2)
-        .attr("rx", 5)
-        .transition()
-        .duration(context.TRANSITION_TIME)
-        .style("fill", "#dfe5e8");
-
-        elemEnter
-        .append("text")
-        .style("font-size", "0px")
-        .style("font-family", "Fira Code, sans-serif")
-        .style("dominant-baseline", "middle")
-        .style("text-anchor", "middle")
-        .transition()
-        .duration(context.TRANSITION_TIME)
-        .style("font-size", "14px")
-        .text((data) => data.value);
-
-        return elemEnter;
-    }
-}
-
-
-/***/ }),
-/* 571 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "RemoveArrayElements": () => (/* binding */ RemoveArrayElements)
-/* harmony export */ });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-//@ts-check
-
-
-
-class RemoveArrayElements {
-
-    /**
-     * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
-     * @returns {d3.Transition}
-     */
-    static removeElements(selection, context) {
-        let removeElem = selection
-        .transition()
-        .duration(0);
-
-        removeElem
-        .selectAll("rect")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .attr("width", context.ITEM_SIZE*1.1)
-        .attr("height", context.ITEM_SIZE*1.1)
-        .attr("x", -context.ITEM_SIZE*1.1 / 2)
-        .attr("y", -context.ITEM_SIZE*1.1 / 2)
-        .style("fill", "#f9aeb7")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("opacity", 0.0)
-        .attr("width", 0)
-        .attr("height", 0)
-        .attr("x", 0)
-        .attr("y", 0);
-
-        removeElem
-        .selectAll("text")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("font-size", "18px")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("font-size", "0px")
-        .style("opacity", 0.0);
-
-        return removeElem
-        .delay(2*context.TRANSITION_TIME)
-        .remove();
-    } 
-}
-
 
 /***/ })
 /******/ 	]);
@@ -31271,7 +31345,7 @@ arrayDiagram.update();
 
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));
-
+d3__WEBPACK_IMPORTED_MODULE_1__.select("#search").on("click", arrayDiagram.search.bind(arrayDiagram));
 })();
 
 /******/ })()

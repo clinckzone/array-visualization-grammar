@@ -2,14 +2,14 @@
 import * as d3 from "d3";
 import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
 
-export class RemoveArrayElements {
+export class RemoveArrayElement {
 
     /**
      * @param {d3.Selection} selection 
      * @param {ArrayDiagram} context 
      * @returns {d3.Transition}
      */
-    static removeElements(selection, context) {
+    static removeElement(selection, context) {
         let removeElem = selection
         .transition()
         .duration(0);
@@ -17,11 +17,11 @@ export class RemoveArrayElements {
         removeElem
         .selectAll("rect")
         .transition()
-        .duration(context.TRANSITION_TIME/2)
+        .duration(context.TRANSITION_TIME/4)
         .attr("width", context.ITEM_SIZE*1.1)
         .attr("height", context.ITEM_SIZE*1.1)
-        .attr("x", -context.ITEM_SIZE*1.1 / 2)
-        .attr("y", -context.ITEM_SIZE*1.1 / 2)
+        .attr("x", -context.ITEM_SIZE*1.1/2)
+        .attr("y", -context.ITEM_SIZE*1.1/2)
         .style("fill", "#f9aeb7")
         .transition()
         .duration(context.TRANSITION_TIME/2)
@@ -34,7 +34,7 @@ export class RemoveArrayElements {
         removeElem
         .selectAll("text")
         .transition()
-        .duration(context.TRANSITION_TIME/2)
+        .duration(context.TRANSITION_TIME/4)
         .style("font-size", "18px")
         .transition()
         .duration(context.TRANSITION_TIME/2)
@@ -42,7 +42,7 @@ export class RemoveArrayElements {
         .style("opacity", 0.0);
 
         return removeElem
-        .delay(2*context.TRANSITION_TIME)
+        .delay(context.TRANSITION_TIME)
         .remove();
     } 
 }
