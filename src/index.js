@@ -2,9 +2,10 @@
 import { ArrayDiagram } from "./Diagrams/ArrayDiagram";
 import * as d3 from "d3";
 
-let data = [10, 22, 31, 14, 25];
+const data = [10, 22, 31, 14, 25];
+const properties = {x: 0, y: 0, label: "Input Array"};
 
-let arrayDiagram = new ArrayDiagram(data);
+let arrayDiagram = new ArrayDiagram(data, properties);
 arrayDiagram.update();
 
 d3.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));

@@ -25,15 +25,21 @@ class ArrayDiagram {
     
     /**
      * @param {Array} data
+     * @param {any} properties
      */
-    constructor(data) {
+    constructor(data, properties) {
         this.data = data.map((value) => this.bindToKey(value));
         
+        this.DIAGRAM_LABEL = properties.label;
+        this.X_POS = properties.x;
+        this.Y_POS = properties.y;
+        this.DIAGRAM_ID = (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)(); 
         this.TRANSITION_TIME = 1000;
         this.ITEM_SIZE = 30;
         this.PADDING = 10;
-
-        this.svg = this.initialize();
+        
+        this.svgContainerRef = d3__WEBPACK_IMPORTED_MODULE_0__.select("#diagram-container");
+        this.arrayBoundaryRect = this.initialize();
     }
 
     /**
@@ -50,37 +56,63 @@ class ArrayDiagram {
 
     //Initializes the array diagram from the data passed to it
     initialize() {
-        //Create a svg container for the array diagram
-        let svg = d3__WEBPACK_IMPORTED_MODULE_0__.select("#diagram-container")
-        .append("svg")
-        .attr("height", this.ITEM_SIZE + this.PADDING) 
-        .style("border-left", "1px solid rgba(0, 0, 0, 0.1)")
-        .style("border-right", "1px solid rgba(0, 0, 0, 0.1)")
-        .style("margin-left", `${this.PADDING}`)
-        .style("margin-right", `${this.PADDING}`);
+        //Create a rect svg for the array diagram's boudnary
+        let boundary = this.svgContainerRef
+        .append("rect")
+        .attr("class", `array-boundary-${this.DIAGRAM_ID}`)
+        .attr("height", this.ITEM_SIZE + this.PADDING)
+        .attr("x", `${this.X_POS}`)
+        .attr("y", `${this.Y_POS}`)
+        .attr("rx", 3)
+        .attr("ry", 3)
+        .style("fill", "#fafafa")
+        .style("stroke", "rgb(0, 0, 0, 0.05)")
+        .style("stroke-width", "0.8")
+        .style("transform", 'translate()');
 
-        return svg;
+        this.svgContainerRef
+        .append("text")
+        .attr("class", `array-label-${this.DIAGRAM_ID}`)
+        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
+        .text(`${this.DIAGRAM_LABEL}`)
+        .style("font-size", "8px");
+
+        return boundary;
     }
 
     update() {
-        //Update svg width
-        this.svg
-        .transition()
-        .duration(this.TRANSITION_TIME)
-        .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
-
         //Update svg elements
-        this.svg
-        .selectAll("g")
+        this.updateBoundary();
+        this.svgContainerRef
+        .selectAll(`.array-element-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this), 
+            enter => {
+                return _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this);
+            },
             update => update
-            .transition()
-            .duration(this.TRANSITION_TIME/2)
-            .attr("transform", (data, index) => `translate(${(this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2}, ${(this.ITEM_SIZE + this.PADDING)/2})`),
-            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this)
+                .transition()
+                .duration(this.TRANSITION_TIME/2)
+                .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
+            exit => {
+                return _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this);
+            }
         );
+    }
+
+    updateBoundary() {
+        //Update array boundary width
+        return this.arrayBoundaryRect
+        .transition()
+        .duration(this.TRANSITION_TIME/2)
+        .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
+    }
+
+    calcPositionCoord(index) {
+        return {
+            x: (this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2 + this.X_POS, 
+            y: (this.ITEM_SIZE + this.PADDING)/2 + this.Y_POS
+        };
     }
 
     push() {
@@ -93,12 +125,10 @@ class ArrayDiagram {
         this.update();
     }
 
-    search() {
+    async search() {
         //Get the position of the element in the array
-        let tillThisIndex = this.data.findIndex(
-            // @ts-ignore
-            element => (element.value == document.getElementById('searchElement').value
-            ));
+        // @ts-ignore
+        let tillThisIndex = this.data.findIndex(element => (element.value == document.getElementById('search-element').value));
 
         //If its not there then just go through all the elements
         if(tillThisIndex === -1) {
@@ -106,7 +136,39 @@ class ArrayDiagram {
         }
 
         const selection = d3__WEBPACK_IMPORTED_MODULE_0__.selectAll("svg");
-        _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__.HighlightArrayElement.hightlightElement(selection, this, tillThisIndex);
+        const foundElement = await _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__.HighlightArrayElement.hightlightElement(selection, this, tillThisIndex);
+        const properties = {x: this.X_POS, y: this.Y_POS + 2*this.ITEM_SIZE, label: "Return Value"};
+        const newArrayDiagram = new ArrayDiagram([this.data[tillThisIndex].value], properties);
+
+        let node = foundElement.node();
+        // @ts-ignore
+        let nodeCopy = node.cloneNode(true);
+        let nodeCopy_ = d3__WEBPACK_IMPORTED_MODULE_0__.select(document.getElementById("diagram-container").appendChild(nodeCopy));
+        console.log(foundElement);
+
+        nodeCopy_
+        .select("rect")
+        .style("fill", "#befcb3");
+        
+        await nodeCopy_
+        .transition()
+        .duration(2*this.TRANSITION_TIME)
+        .tween('elementTween', (data) => {
+            const interpolateSVGgroup = d3__WEBPACK_IMPORTED_MODULE_0__.interpolateTransformSvg(
+                `translate(${this.calcPositionCoord(tillThisIndex).x}, ${this.calcPositionCoord(tillThisIndex).y})`, 
+                `translate(${newArrayDiagram.calcPositionCoord(0).x}, ${newArrayDiagram.calcPositionCoord(0).y})`
+                );
+            return (t) => {
+                nodeCopy_
+                .attr("transform", interpolateSVGgroup(t))
+            }
+        }).end();
+
+        nodeCopy_
+        .select("rect")
+        .transition()
+        .duration(this.TRANSITION_TIME)
+        .style("fill" , "#dfe5e8");
     }
 }
 
@@ -30987,17 +31049,19 @@ class AddArrayElement {
     
     /**
      * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
+     * @param {ArrayDiagram} context
      * @returns {d3.Selection}
      */
     static addElement(selection, context) {
-        let elemEnter = selection
+        const elemEnter = selection
         .append("g")
-        .attr("transform", (data, index) => `translate(${(context.ITEM_SIZE + context.PADDING) * (index + 0.5) + context.PADDING/2}, ${(context.ITEM_SIZE + context.PADDING)/2})`);
+        .attr("class", `array-element-${context.DIAGRAM_ID}`)
+        .attr("transform", (data, index) => `translate(${context.calcPositionCoord(index).x}, ${context.calcPositionCoord(index).y})`);
 
         elemEnter
         .append("rect")
         .style("fill", "#befcb3")
+        .style("opacity", 0.0)
         .transition()
         .duration(context.TRANSITION_TIME/2)
         .attr("width", context.ITEM_SIZE)
@@ -31005,20 +31069,23 @@ class AddArrayElement {
         .attr("x", -context.ITEM_SIZE/2)
         .attr("y", -context.ITEM_SIZE/2)
         .attr("rx", 5)
+        .style("opacity", 1.0)
         .transition()
         .duration(context.TRANSITION_TIME)
-        .style("fill", "#dfe5e8");
-
+        .style("fill", "#dfe5e8")
+        
         elemEnter
         .append("text")
         .style("font-size", "0px")
         .style("font-family", "Fira Code, sans-serif")
         .style("dominant-baseline", "middle")
         .style("text-anchor", "middle")
+        .style("opacity", 0.0)
         .transition()
         .duration(context.TRANSITION_TIME/2)
         .style("font-size", "14px")
-        .text((data) => data.value);
+        .style("opacity", 1.0)
+        .text((data) => data.value)
 
         return elemEnter;
     }
@@ -31045,38 +31112,48 @@ class HighlightArrayElement {
      * @param {d3.Selection} selection 
      * @param {ArrayDiagram} context 
      */
-    static hightlightElement(selection, context, tillThisIndex) {
-
+    static async hightlightElement(selection, context, tillThisIndex) {
+        const transitionPromise = [];
         //Selection here represents an array of groups within the svg.
-        selection
-        .selectAll("rect")
-        .filter((data, index) => index <= tillThisIndex)
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .delay((data, index) => index*1000)
-        .attr("width", context.ITEM_SIZE*1.1)
-        .attr("height", context.ITEM_SIZE*1.1)
-        .attr("x", -context.ITEM_SIZE*1.1/2)
-        .attr("y", -context.ITEM_SIZE*1.1/2)
-        .style("fill", "#99d8fc")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("fill", "#dfe5e8")
-        .attr("width", context.ITEM_SIZE)
-        .attr("height", context.ITEM_SIZE)
-        .attr("x", -context.ITEM_SIZE/2)
-        .attr("y", -context.ITEM_SIZE/2);
+        transitionPromise.push(
+            selection
+            .selectAll(`.array-element-${context.DIAGRAM_ID} rect`)
+            .filter((data, index) => index <= tillThisIndex)
+            .transition()
+            .duration(context.TRANSITION_TIME/2)
+            .delay((data, index) => index*1000)
+            .attr("width", context.ITEM_SIZE*1.1)
+            .attr("height", context.ITEM_SIZE*1.1)
+            .attr("x", -context.ITEM_SIZE*1.1/2)
+            .attr("y", -context.ITEM_SIZE*1.1/2)
+            .style("fill", (data, index) => index === tillThisIndex ? "#befcb3" : "#99d8fc")
+            .transition()
+            .duration(context.TRANSITION_TIME/2)
+            .style("fill", (data, index) => index === tillThisIndex ? "#befcb3" : "#dfe5e8")
+            .attr("width", context.ITEM_SIZE)
+            .attr("height", context.ITEM_SIZE)
+            .attr("x", -context.ITEM_SIZE/2)
+            .attr("y", -context.ITEM_SIZE/2)
+            .end()
+        );
+        
+        transitionPromise.push(
+            selection
+            .selectAll(`.array-element-${context.DIAGRAM_ID} text`)
+            .filter((data, index) => index <= tillThisIndex)
+            .transition()
+            .duration(context.TRANSITION_TIME/2)
+            .delay((data, index) => index*1000)
+            .style("font-size", "16px")
+            .transition()
+            .duration(context.TRANSITION_TIME/2)
+            .style("font-size", "14px")
+            .end()
+        );
 
-        selection
-        .selectAll("text")
-        .filter((data, index) => index <= tillThisIndex)
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .delay((data, index) => index*1000)
-        .style("font-size", "16px")
-        .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("font-size", "14px");
+        const element = selection.selectAll("g").filter((data, index) => index == tillThisIndex);
+
+        return await Promise.all(transitionPromise).then(() => element);
     }
 }
 
@@ -31099,11 +31176,11 @@ class RemoveArrayElement {
 
     /**
      * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
-     * @returns {d3.Transition}
+     * @param {ArrayDiagram} context
+     * @returns {d3.Selection}
      */
     static removeElement(selection, context) {
-        let removeElem = selection
+        const removeElem = selection
         .transition()
         .duration(0);
 
@@ -31134,9 +31211,8 @@ class RemoveArrayElement {
         .style("font-size", "0px")
         .style("opacity", 0.0);
 
-        return removeElem
-        .delay(context.TRANSITION_TIME)
-        .remove();
+        // @ts-ignore
+        return removeElem.delay(context.TRANSITION_TIME/2).remove();
     } 
 }
 
@@ -31338,14 +31414,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let data = [10, 22, 31, 14, 25];
+const data = [10, 22, 31, 14, 25];
+const properties = {x: 0, y: 0, label: "Input Array"};
 
-let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data);
+let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data, properties);
 arrayDiagram.update();
 
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#search").on("click", arrayDiagram.search.bind(arrayDiagram));
+
 })();
 
 /******/ })()

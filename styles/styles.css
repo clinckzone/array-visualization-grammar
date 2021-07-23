@@ -1,21 +1,28 @@
-#diagram-container {
-    position: absolute;
-    z-index: 10;
-
-    color: rgba(0, 0, 0, 0.5);
-    background-color: white;
-    
-    margin: 0;
-    padding: 0px 15px 0px 15px;
-    border-radius: 6px 6px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-  
-    display: flex;
-    justify-content: center; /* align horizontal */
-    align-items: center; /* align vertical */
+body {
+    font-family: "Fira Sans", sans-serif;
 }
 
-#controls {
-    margin-top: 75px;
+#diagram-container {
+    width: 100%;
+    z-index: 10;
+    background-color: white;
+    border: none;
+    /* 
+    border-radius: 6px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1); 
+    */
+}
+
+#controls button {
+    color: grey;
+    background: white;
+    height: 30px;
+    border-radius: 3px;
+    border: 1px solid #a3a3a3;
+    font-family: "Fira Sans", sans-serif;
+}
+
+#controls button:hover {
+    background: grey;
+    color: white;
 }

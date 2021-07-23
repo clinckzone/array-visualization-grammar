@@ -6,11 +6,11 @@ export class RemoveArrayElement {
 
     /**
      * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
-     * @returns {d3.Transition}
+     * @param {ArrayDiagram} context
+     * @returns {d3.Selection}
      */
     static removeElement(selection, context) {
-        let removeElem = selection
+        const removeElem = selection
         .transition()
         .duration(0);
 
@@ -41,8 +41,7 @@ export class RemoveArrayElement {
         .style("font-size", "0px")
         .style("opacity", 0.0);
 
-        return removeElem
-        .delay(context.TRANSITION_TIME)
-        .remove();
+        // @ts-ignore
+        return removeElem.delay(context.TRANSITION_TIME/2).remove();
     } 
 }
