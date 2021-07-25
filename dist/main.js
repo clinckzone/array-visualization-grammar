@@ -84,14 +84,14 @@ class ArrayDiagram {
         .selectAll(`g.array-element-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
+            enter => (0,_Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.addArrayElement)(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
                 .attr("class", `array-element-${this.DIAGRAM_ID}`)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
             update => update
                 .transition()
                 .duration(this.TRANSITION_TIME/2)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
-            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
+            exit => (0,_Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.removeArrayElement)(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
                 .transition()
                 .delay(this.TRANSITION_TIME/2)
                 .remove()
@@ -129,16 +129,6 @@ class ArrayDiagram {
             value: value,
             key: (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)()
         };
-    }
-
-    push() {
-        this.data.push(this.bindToKey(Math.ceil(Math.random()*50)));
-        this.update();
-    }
-
-    pop() {
-        this.data.pop();
-        this.update();
     }
 
     async search() {
@@ -31053,57 +31043,54 @@ function nopropagation(event) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AddArrayElement": () => (/* binding */ AddArrayElement)
+/* harmony export */   "addArrayElement": () => (/* binding */ addArrayElement)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Misc_colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
+/* harmony import */ var _Misc_Color__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
 //@ts-check
 
 
 
-class AddArrayElement {
+/**
+ * @param {d3.Selection} selection
+ * @param {number} elementSize
+ * @param {number} duration
+ * @returns {d3.Selection}
+ */
+function addArrayElement(selection, elementSize, duration) {
+    //Add the elements the svg that are entering
+    const elemEnter = selection.append("g");
+
+    elemEnter
+    .append("rect")
+    .style("opacity", 0.0)
+    .style("fill", _Misc_Color__WEBPACK_IMPORTED_MODULE_1__.color.GREEN)
+    .transition()
+    .duration(duration/2)
+    .style("opacity", 1.0)
+    .attr("width", elementSize)
+    .attr("height", elementSize)
+    .attr("x", -elementSize/2)
+    .attr("y", -elementSize/2)
+    .attr("rx", 5)
+    .transition()
+    .duration(duration/2)
+    .style("fill", _Misc_Color__WEBPACK_IMPORTED_MODULE_1__.color.GREY)
     
-    /**
-     * @param {d3.Selection} selection
-     * @param {number} elementSize
-     * @param {number} duration
-     * @returns {d3.Selection}
-     */
-    static addElement(selection, elementSize, duration) {
-        //Add the elements the svg that are entering
-        const elemEnter = selection.append("g");
+    elemEnter
+    .append("text")
+    .text((data) => data.value)
+    .style("opacity", 0.0)
+    .style("font-size", "0px")
+    .style("font-family", "Fira Code, sans-serif")
+    .style("text-anchor", "middle")
+    .style("dominant-baseline", "middle")
+    .transition()
+    .duration(duration/2)
+    .style("opacity", 1.0)
+    .style("font-size", "14px")
 
-        elemEnter
-        .append("rect")
-        .style("opacity", 0.0)
-        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.GREEN)
-        .transition()
-        .duration(duration/2)
-        .style("opacity", 1.0)
-        .attr("width", elementSize)
-        .attr("height", elementSize)
-        .attr("x", -elementSize/2)
-        .attr("y", -elementSize/2)
-        .attr("rx", 5)
-        .transition()
-        .duration(duration/2)
-        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.GREY)
-        
-        elemEnter
-        .append("text")
-        .text((data) => data.value)
-        .style("opacity", 0.0)
-        .style("font-size", "0px")
-        .style("font-family", "Fira Code, sans-serif")
-        .style("text-anchor", "middle")
-        .style("dominant-baseline", "middle")
-        .transition()
-        .duration(duration/2)
-        .style("opacity", 1.0)
-        .style("font-size", "14px")
-
-        return elemEnter;
-    }
+    return elemEnter;
 }
 
 
@@ -31194,54 +31181,50 @@ class HighlightArrayElement {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "RemoveArrayElement": () => (/* binding */ RemoveArrayElement)
+/* harmony export */   "removeArrayElement": () => (/* binding */ removeArrayElement)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Misc_colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
+/* harmony import */ var _Misc_Color__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
 //@ts-check
 
 
 
-class RemoveArrayElement {
+/**
+ * @param {d3.Selection} selection 
+ * @param {number} itemSize
+ * @param {number} duration
+ * @returns {d3.Selection}
+ */
+function removeArrayElement(selection, itemSize, duration) {
 
-    /**
-     * @param {d3.Selection} selection 
-     * @param {number} itemSize
-     * @param {number} duration
-     * @returns {d3.Selection}
-     */
-    static removeElement(selection, itemSize, duration) {
-        const removeElem = selection;
+    selection
+    .selectAll("rect")
+    .transition()
+    .duration(duration/2)
+    .attr("width", itemSize*1.1)
+    .attr("height", itemSize*1.1)
+    .attr("x", -itemSize*1.1/2)
+    .attr("y", -itemSize*1.1/2)
+    .style("fill", _Misc_Color__WEBPACK_IMPORTED_MODULE_1__.color.RED)
+    .transition()
+    .duration(duration/2)
+    .attr("width", 0)
+    .attr("height", 0)
+    .attr("x", 0)
+    .attr("y", 0)
+    .style("opacity", 0.0);
 
-        removeElem
-        .selectAll("rect")
-        .transition()
-        .duration(duration/2)
-        .attr("width", itemSize*1.1)
-        .attr("height", itemSize*1.1)
-        .attr("x", -itemSize*1.1/2)
-        .attr("y", -itemSize*1.1/2)
-        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.RED)
-        .transition()
-        .duration(duration/2)
-        .attr("width", 0)
-        .attr("height", 0)
-        .attr("x", 0)
-        .attr("y", 0)
-        .style("opacity", 0.0);
+    selection
+    .selectAll("text")
+    .transition()
+    .duration(duration/2)
+    .style("font-size", "18px")
+    .transition()
+    .duration(duration/2)
+    .style("font-size", "0px")
+    .style("opacity", 0.0);
 
-        removeElem
-        .selectAll("text")
-        .transition()
-        .duration(duration/2)
-        .style("font-size", "18px")
-        .transition()
-        .duration(duration/2)
-        .style("font-size", "0px")
-        .style("opacity", 0.0);
-
-        return removeElem;
-    } 
+    return selection;
 }
 
 
@@ -31375,6 +31358,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i);
 
+/***/ }),
+/* 574 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "push": () => (/* binding */ push)
+/* harmony export */ });
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+//@ts-check
+
+
+/**
+ * @param {ArrayDiagram} arrayDiagram 
+ */
+function push(arrayDiagram, item) {
+    arrayDiagram.data.push(item);
+    arrayDiagram.update();
+}
+
+
+/***/ }),
+/* 575 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "pop": () => (/* binding */ pop)
+/* harmony export */ });
+/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+//@ts-check
+
+
+/**
+ * @param {ArrayDiagram} arrayDiagram 
+ */
+function pop(arrayDiagram) {
+    arrayDiagram.data.pop();
+    arrayDiagram.update();
+}
+
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -31438,7 +31463,11 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _Functions_ArrayFunctions_Push__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(574);
+/* harmony import */ var _Functions_ArrayFunctions_Pop__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(575);
 //@ts-check
+
+
 
 
 
@@ -31447,8 +31476,8 @@ const properties = {x: 0, y: 0, label: "Input Array"};
 
 let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data, properties);
 
-d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
-d3__WEBPACK_IMPORTED_MODULE_1__.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));
+d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", _Functions_ArrayFunctions_Push__WEBPACK_IMPORTED_MODULE_2__.push.bind(arrayDiagram));
+d3__WEBPACK_IMPORTED_MODULE_1__.select("#pop").on("click", _Functions_ArrayFunctions_Pop__WEBPACK_IMPORTED_MODULE_3__.pop.bind(arrayDiagram));
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#search").on("click", arrayDiagram.search.bind(arrayDiagram));
 
 })();

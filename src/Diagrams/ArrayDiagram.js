@@ -1,9 +1,9 @@
 //@ts-check
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid"; 
-import { AddArrayElement } from "../Animations/ArrayAnimations/AddArrayElement";
+import { addArrayElement} from "../Animations/ArrayAnimations/AddArrayElement";
 import { HighlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
-import { RemoveArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
+import { removeArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
 
 export class ArrayDiagram {
     
@@ -68,14 +68,14 @@ export class ArrayDiagram {
         .selectAll(`g.array-element-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => AddArrayElement.addElement(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
+            enter => addArrayElement(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
                 .attr("class", `array-element-${this.DIAGRAM_ID}`)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
             update => update
                 .transition()
                 .duration(this.TRANSITION_TIME/2)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
-            exit => RemoveArrayElement.removeElement(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
+            exit => removeArrayElement(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
                 .transition()
                 .delay(this.TRANSITION_TIME/2)
                 .remove()
@@ -113,16 +113,6 @@ export class ArrayDiagram {
             value: value,
             key: uuidv4()
         };
-    }
-
-    push() {
-        this.data.push(this.bindToKey(Math.ceil(Math.random()*50)));
-        this.update();
-    }
-
-    pop() {
-        this.data.pop();
-        this.update();
     }
 
     async search() {
