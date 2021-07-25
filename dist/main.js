@@ -10,10 +10,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ArrayDiagram": () => (/* binding */ ArrayDiagram)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(568);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(569);
 /* harmony import */ var _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(565);
-/* harmony import */ var _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(566);
-/* harmony import */ var _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(567);
+/* harmony import */ var _Animations_ArrayAnimations_HighlightArrayElement__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(567);
+/* harmony import */ var _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(568);
 //@ts-check
 
  
@@ -25,7 +25,7 @@ class ArrayDiagram {
     
     /**
      * @param {Array} data
-     * @param {any} properties
+     * @param {{label: string; x: number; y: number}} properties
      */
     constructor(data, properties) {
         this.data = data.map((value) => this.bindToKey(value));
@@ -33,29 +33,31 @@ class ArrayDiagram {
         this.DIAGRAM_LABEL = properties.label;
         this.X_POS = properties.x;
         this.Y_POS = properties.y;
+
         this.DIAGRAM_ID = (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)(); 
         this.TRANSITION_TIME = 1000;
         this.ITEM_SIZE = 30;
         this.PADDING = 10;
         
         this.svgContainerRef = d3__WEBPACK_IMPORTED_MODULE_0__.select("#diagram-container");
-        this.arrayBoundaryRect = this.initialize();
+        this.arrayBoundary = this.initializeArrayBoundary();
+        this.arrayLabel = this.initializeArrayLabel();
+        this.arrayElements = this.update();
     }
 
-    /**
-     * Binds a key with each array element in the diagram
-     * so that it can be uniquely identified by d3.
-     * @param {any} value 
-     */
-    bindToKey(value) {
-        return {
-            value: value,
-            key: (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)()
-        };
+    initializeArrayLabel() {
+        //Create a svg text as the label for the diagram
+        let label = this.svgContainerRef
+        .append("text")
+        .attr("class", `array-label-${this.DIAGRAM_ID}`)
+        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
+        .text(`${this.DIAGRAM_LABEL}`)
+        .style("font-size", "8px");
+
+        return label;
     }
 
-    //Initializes the array diagram from the data passed to it
-    initialize() {
+    initializeArrayBoundary() {
         //Create a rect svg for the array diagram's boudnary
         let boundary = this.svgContainerRef
         .append("rect")
@@ -70,48 +72,62 @@ class ArrayDiagram {
         .style("stroke-width", "0.8")
         .style("transform", 'translate()');
 
-        this.svgContainerRef
-        .append("text")
-        .attr("class", `array-label-${this.DIAGRAM_ID}`)
-        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
-        .text(`${this.DIAGRAM_LABEL}`)
-        .style("font-size", "8px");
-
         return boundary;
     }
 
     update() {
-        //Update svg elements
+        //Update the array's boundary width
         this.updateBoundary();
-        this.svgContainerRef
-        .selectAll(`.array-element-${this.DIAGRAM_ID}`)
+
+        //Update the elements that are in the array diagram
+        const elements = this.svgContainerRef
+        .selectAll(`g.array-element-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => {
-                return _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this);
-            },
+            enter => _Animations_ArrayAnimations_AddArrayElement__WEBPACK_IMPORTED_MODULE_1__.AddArrayElement.addElement(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
+                .attr("class", `array-element-${this.DIAGRAM_ID}`)
+                .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
             update => update
                 .transition()
                 .duration(this.TRANSITION_TIME/2)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
-            exit => {
-                return _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this);
-            }
+            exit => _Animations_ArrayAnimations_RemoveArrayElement__WEBPACK_IMPORTED_MODULE_3__.RemoveArrayElement.removeElement(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
+                .transition()
+                .delay(this.TRANSITION_TIME/2)
+                .remove()
         );
+
+        return elements;
     }
 
+    //Update witdh of array's boundary
     updateBoundary() {
-        //Update array boundary width
-        return this.arrayBoundaryRect
+        return this.arrayBoundary
         .transition()
         .duration(this.TRANSITION_TIME/2)
         .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
     }
 
+    /**
+     * Returns the position of each element in the array diagram
+     * @param {number} index
+     */
     calcPositionCoord(index) {
         return {
             x: (this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2 + this.X_POS, 
             y: (this.ITEM_SIZE + this.PADDING)/2 + this.Y_POS
+        };
+    }
+
+    /**
+     * Binds a key with each array element in the diagram
+     * so that it can be uniquely identified by d3.
+     * @param {any} value 
+     */
+     bindToKey(value) {
+        return {
+            value: value,
+            key: (0,uuid__WEBPACK_IMPORTED_MODULE_4__.default)()
         };
     }
 
@@ -31040,7 +31056,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AddArrayElement": () => (/* binding */ AddArrayElement)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony import */ var _Misc_colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
 //@ts-check
 
 
@@ -31048,44 +31064,43 @@ __webpack_require__.r(__webpack_exports__);
 class AddArrayElement {
     
     /**
-     * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context
+     * @param {d3.Selection} selection
+     * @param {number} elementSize
+     * @param {number} duration
      * @returns {d3.Selection}
      */
-    static addElement(selection, context) {
-        const elemEnter = selection
-        .append("g")
-        .attr("class", `array-element-${context.DIAGRAM_ID}`)
-        .attr("transform", (data, index) => `translate(${context.calcPositionCoord(index).x}, ${context.calcPositionCoord(index).y})`);
+    static addElement(selection, elementSize, duration) {
+        //Add the elements the svg that are entering
+        const elemEnter = selection.append("g");
 
         elemEnter
         .append("rect")
-        .style("fill", "#befcb3")
         .style("opacity", 0.0)
+        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.GREEN)
         .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .attr("width", context.ITEM_SIZE)
-        .attr("height", context.ITEM_SIZE)
-        .attr("x", -context.ITEM_SIZE/2)
-        .attr("y", -context.ITEM_SIZE/2)
-        .attr("rx", 5)
+        .duration(duration/2)
         .style("opacity", 1.0)
+        .attr("width", elementSize)
+        .attr("height", elementSize)
+        .attr("x", -elementSize/2)
+        .attr("y", -elementSize/2)
+        .attr("rx", 5)
         .transition()
-        .duration(context.TRANSITION_TIME)
-        .style("fill", "#dfe5e8")
+        .duration(duration/2)
+        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.GREY)
         
         elemEnter
         .append("text")
+        .text((data) => data.value)
+        .style("opacity", 0.0)
         .style("font-size", "0px")
         .style("font-family", "Fira Code, sans-serif")
-        .style("dominant-baseline", "middle")
         .style("text-anchor", "middle")
-        .style("opacity", 0.0)
+        .style("dominant-baseline", "middle")
         .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("font-size", "14px")
+        .duration(duration/2)
         .style("opacity", 1.0)
-        .text((data) => data.value)
+        .style("font-size", "14px")
 
         return elemEnter;
     }
@@ -31094,6 +31109,21 @@ class AddArrayElement {
 
 /***/ }),
 /* 566 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "color": () => (/* binding */ color)
+/* harmony export */ });
+const color = {
+    "RED": "#f9aeb7",
+    "GREEN": "#befcb3",
+    "GREY": "#dfe5e8",
+}
+
+
+/***/ }),
+/* 567 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31159,7 +31189,7 @@ class HighlightArrayElement {
 
 
 /***/ }),
-/* 567 */
+/* 568 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31167,7 +31197,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "RemoveArrayElement": () => (/* binding */ RemoveArrayElement)
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-/* harmony import */ var _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony import */ var _Misc_colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(566);
 //@ts-check
 
 
@@ -31176,57 +31206,55 @@ class RemoveArrayElement {
 
     /**
      * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context
+     * @param {number} itemSize
+     * @param {number} duration
      * @returns {d3.Selection}
      */
-    static removeElement(selection, context) {
-        const removeElem = selection
-        .transition()
-        .duration(0);
+    static removeElement(selection, itemSize, duration) {
+        const removeElem = selection;
 
         removeElem
         .selectAll("rect")
         .transition()
-        .duration(context.TRANSITION_TIME/4)
-        .attr("width", context.ITEM_SIZE*1.1)
-        .attr("height", context.ITEM_SIZE*1.1)
-        .attr("x", -context.ITEM_SIZE*1.1/2)
-        .attr("y", -context.ITEM_SIZE*1.1/2)
-        .style("fill", "#f9aeb7")
+        .duration(duration/2)
+        .attr("width", itemSize*1.1)
+        .attr("height", itemSize*1.1)
+        .attr("x", -itemSize*1.1/2)
+        .attr("y", -itemSize*1.1/2)
+        .style("fill", _Misc_colors__WEBPACK_IMPORTED_MODULE_1__.color.RED)
         .transition()
-        .duration(context.TRANSITION_TIME/2)
-        .style("opacity", 0.0)
+        .duration(duration/2)
         .attr("width", 0)
         .attr("height", 0)
         .attr("x", 0)
-        .attr("y", 0);
+        .attr("y", 0)
+        .style("opacity", 0.0);
 
         removeElem
         .selectAll("text")
         .transition()
-        .duration(context.TRANSITION_TIME/4)
+        .duration(duration/2)
         .style("font-size", "18px")
         .transition()
-        .duration(context.TRANSITION_TIME/2)
+        .duration(duration/2)
         .style("font-size", "0px")
         .style("opacity", 0.0);
 
-        // @ts-ignore
-        return removeElem.delay(context.TRANSITION_TIME/2).remove();
+        return removeElem;
     } 
 }
 
 
 /***/ }),
-/* 568 */
+/* 569 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(569);
-/* harmony import */ var _stringify_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(570);
+/* harmony import */ var _rng_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(570);
+/* harmony import */ var _stringify_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(571);
 
 
 
@@ -31253,7 +31281,7 @@ function v4(options, buf, offset) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (v4);
 
 /***/ }),
-/* 569 */
+/* 570 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31281,14 +31309,14 @@ function rng() {
 }
 
 /***/ }),
-/* 570 */
+/* 571 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(571);
+/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(572);
 
 /**
  * Convert array of 16 byte values to UUID string format of the form:
@@ -31321,14 +31349,14 @@ function stringify(arr) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (stringify);
 
 /***/ }),
-/* 571 */
+/* 572 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _regex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(572);
+/* harmony import */ var _regex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(573);
 
 
 function validate(uuid) {
@@ -31338,7 +31366,7 @@ function validate(uuid) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (validate);
 
 /***/ }),
-/* 572 */
+/* 573 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -31418,7 +31446,6 @@ const data = [10, 22, 31, 14, 25];
 const properties = {x: 0, y: 0, label: "Input Array"};
 
 let arrayDiagram = new _Diagrams_ArrayDiagram__WEBPACK_IMPORTED_MODULE_0__.ArrayDiagram(data, properties);
-arrayDiagram.update();
 
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#push").on("click", arrayDiagram.push.bind(arrayDiagram));
 d3__WEBPACK_IMPORTED_MODULE_1__.select("#pop").on("click", arrayDiagram.pop.bind(arrayDiagram));

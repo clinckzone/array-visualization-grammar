@@ -9,7 +9,7 @@ export class ArrayDiagram {
     
     /**
      * @param {Array} data
-     * @param {any} properties
+     * @param {{label: string; x: number; y: number}} properties
      */
     constructor(data, properties) {
         this.data = data.map((value) => this.bindToKey(value));
@@ -17,29 +17,31 @@ export class ArrayDiagram {
         this.DIAGRAM_LABEL = properties.label;
         this.X_POS = properties.x;
         this.Y_POS = properties.y;
+
         this.DIAGRAM_ID = uuidv4(); 
         this.TRANSITION_TIME = 1000;
         this.ITEM_SIZE = 30;
         this.PADDING = 10;
         
         this.svgContainerRef = d3.select("#diagram-container");
-        this.arrayBoundaryRect = this.initialize();
+        this.arrayBoundary = this.initializeArrayBoundary();
+        this.arrayLabel = this.initializeArrayLabel();
+        this.arrayElements = this.update();
     }
 
-    /**
-     * Binds a key with each array element in the diagram
-     * so that it can be uniquely identified by d3.
-     * @param {any} value 
-     */
-    bindToKey(value) {
-        return {
-            value: value,
-            key: uuidv4()
-        };
+    initializeArrayLabel() {
+        //Create a svg text as the label for the diagram
+        let label = this.svgContainerRef
+        .append("text")
+        .attr("class", `array-label-${this.DIAGRAM_ID}`)
+        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
+        .text(`${this.DIAGRAM_LABEL}`)
+        .style("font-size", "8px");
+
+        return label;
     }
 
-    //Initializes the array diagram from the data passed to it
-    initialize() {
+    initializeArrayBoundary() {
         //Create a rect svg for the array diagram's boudnary
         let boundary = this.svgContainerRef
         .append("rect")
@@ -54,48 +56,62 @@ export class ArrayDiagram {
         .style("stroke-width", "0.8")
         .style("transform", 'translate()');
 
-        this.svgContainerRef
-        .append("text")
-        .attr("class", `array-label-${this.DIAGRAM_ID}`)
-        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
-        .text(`${this.DIAGRAM_LABEL}`)
-        .style("font-size", "8px");
-
         return boundary;
     }
 
     update() {
-        //Update svg elements
+        //Update the array's boundary width
         this.updateBoundary();
-        this.svgContainerRef
-        .selectAll(`.array-element-${this.DIAGRAM_ID}`)
+
+        //Update the elements that are in the array diagram
+        const elements = this.svgContainerRef
+        .selectAll(`g.array-element-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => {
-                return AddArrayElement.addElement(enter, this);
-            },
+            enter => AddArrayElement.addElement(enter, this.ITEM_SIZE, this.TRANSITION_TIME)
+                .attr("class", `array-element-${this.DIAGRAM_ID}`)
+                .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
             update => update
                 .transition()
                 .duration(this.TRANSITION_TIME/2)
                 .attr("transform", (data, index) => `translate(${this.calcPositionCoord(index).x}, ${this.calcPositionCoord(index).y})`),
-            exit => {
-                return RemoveArrayElement.removeElement(exit, this);
-            }
+            exit => RemoveArrayElement.removeElement(exit, this.ITEM_SIZE, this.TRANSITION_TIME/2)
+                .transition()
+                .delay(this.TRANSITION_TIME/2)
+                .remove()
         );
+
+        return elements;
     }
 
+    //Update witdh of array's boundary
     updateBoundary() {
-        //Update array boundary width
-        return this.arrayBoundaryRect
+        return this.arrayBoundary
         .transition()
         .duration(this.TRANSITION_TIME/2)
         .attr("width", (this.ITEM_SIZE + this.PADDING) * this.data.length + this.PADDING);
     }
 
+    /**
+     * Returns the position of each element in the array diagram
+     * @param {number} index
+     */
     calcPositionCoord(index) {
         return {
             x: (this.ITEM_SIZE + this.PADDING) * (index + 0.5) + this.PADDING/2 + this.X_POS, 
             y: (this.ITEM_SIZE + this.PADDING)/2 + this.Y_POS
+        };
+    }
+
+    /**
+     * Binds a key with each array element in the diagram
+     * so that it can be uniquely identified by d3.
+     * @param {any} value 
+     */
+     bindToKey(value) {
+        return {
+            value: value,
+            key: uuidv4()
         };
     }
 
