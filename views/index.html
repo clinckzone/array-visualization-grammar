@@ -6,16 +6,20 @@
         <link href="styles.css" type="text/css" rel="stylesheet">
     </head>
     <body>
-        <script type="module" src="main.js"></script>
+        <script type="module" src="main.bundle.js"></script>
         <h1>Work in Progress ⛔🚧👷‍♂️</h1>
-        <svg id="diagram-container">
-            <!-- Container for svg diagrams -->
-        </svg>
-        <div id="controls">
-            <button id="push">Push</button>
-            <button id="pop">Pop</button>
-            <button id="search">Search</button>
-            <input type="text" id="search-element" name="search-element">
+        <div id="container">
+            <div id="js-editor-container"></div>
+            <div id="json-editor-container"></div>
+            <svg id="svg-container"></svg>
         </div>
+        <!-- 
+            <div id="controls">
+                <button id="push">Push</button>
+                <button id="pop">Pop</button>
+                <button id="search">Search</button>
+                <input type="text" id="search-element" name="search-element">
+            </div>
+        -->
     </body>
 </html>

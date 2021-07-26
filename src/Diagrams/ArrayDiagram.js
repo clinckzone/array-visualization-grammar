@@ -23,7 +23,7 @@ export class ArrayDiagram {
         this.ITEM_SIZE = 30;
         this.PADDING = 10;
         
-        this.svgContainerRef = d3.select("#diagram-container");
+        this.svgContainerRef = d3.select("#svg-container");
         this.arrayBoundary = this.initializeArrayBoundary();
         this.arrayLabel = this.initializeArrayLabel();
         this.arrayElements = this.update();
@@ -34,9 +34,10 @@ export class ArrayDiagram {
         let label = this.svgContainerRef
         .append("text")
         .attr("class", `array-label-${this.DIAGRAM_ID}`)
-        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2*this.PADDING}`)
+        .attr("x", `${this.X_POS}`)
+        .attr("y", `${this.Y_POS + this.ITEM_SIZE + 2.5*this.PADDING}`)
         .text(`${this.DIAGRAM_LABEL}`)
-        .style("font-size", "8px");
+        .style("font-size", "10px");
 
         return label;
     }
