@@ -16,12 +16,14 @@ h1 {
 }
 
 #js-editor-container {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+    outline-offset: -0.5px;
 }
 
 
 #json-editor-container {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    outline: 1px solid rgba(0, 0, 0, 0.1);
+    outline-offset: -0.5px;
 }
 
 #svg-container {
@@ -29,10 +31,11 @@ h1 {
     height: 100%;
     z-index: 10;
     background-color: white;
-    border: 1px solid rgba(0, 0, 0, 0.1); 
+    outline: 1px solid rgba(0, 0, 0, 0.1); 
+    outline-offset: -0.5px;
 }
-/* 
-#controls button {
+
+.control-button {
     color: grey;
     background: white;
     height: 30px;
@@ -41,7 +44,7 @@ h1 {
     font-family: "Fira Sans", sans-serif;
 }
 
-#controls button:hover {
+.control-button:hover {
     background: grey;
     color: white;
-} */
+}
