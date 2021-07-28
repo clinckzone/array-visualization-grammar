@@ -6,6 +6,6 @@ import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
  * @param {any} item
  */
 export function unshift(arrayDiagram, item) {
-    arrayDiagram.data.unshift(item);
+    arrayDiagram.data.unshift(arrayDiagram.bindToKey(item));
     arrayDiagram.update();
 }

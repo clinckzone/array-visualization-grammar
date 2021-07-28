@@ -1,44 +1,37 @@
+import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
 import { DataSpec } from "./DataSpec";
+import { pop } from "../Functions/ArrayFunctions/Pop";
+import { push } from "../Functions/ArrayFunctions/Push";
+import { shift } from "../Functions/ArrayFunctions/Shift";
+import { unshift } from "../Functions/ArrayFunctions/Unshift";
 
 //@ts-check
 export class FunctionAnimationSpec {
     constructor(rawSpec) {
+        this.data = new DataSpec(rawSpec.data);
         this.callee = rawSpec.callee;
-        this.data = rawSpec.args.map((arg) => new DataSpec(arg));
+        this.args = rawSpec.args.map((arg) => new DataSpec(arg));
     }
 
     compile() {
-        let array = this.data.find(element => element.type === "array").value;
+        const arrayDiagram = new ArrayDiagram(this.data.value, {x: 10, y: 10, label: this.data.name});
+
         if(this.callee === "pop") {
-            console.log(`Initial array: ${array}`);
-            
-            let poppedElement = array.pop();
-            console.log(`Array after ${this.callee}: ${array}`);
-            console.log(`Popped element ${poppedElement}`);
+            pop(arrayDiagram);
         }
 
         else if (this.callee === "push") {
-            let element = this.data.find(element => element.name === "element").value;
-            console.log(`Initial array: ${array}`);
-
-            let pushedArray = array.push(element);
-            console.log(`Array after ${this.callee}: ${array}`);
+            let item = this.args.find(item => item.name === "item").value;
+            push(arrayDiagram, item);
         }
 
         else if (this.callee === "shift") {
-            console.log(`Initial array: ${array}`);
-            
-            let poppedElement = array.shift();
-            console.log(`Array after ${this.callee}: ${array}`);
-            console.log(`Popped element ${poppedElement}`);
+            shift(arrayDiagram);
         }
 
         else if (this.callee === "unshift") {
-            let element = this.data.find(element => element.name === "element").value;
-            console.log(`Initial array: ${array}`);
-
-            let pushedArray = array.unshift(element);
-            console.log(`Array after ${this.callee}: ${array}`);
+            let item = this.args.find(item => item.name === "item").value;
+            unshift(arrayDiagram, item);
         }
     }
 }
