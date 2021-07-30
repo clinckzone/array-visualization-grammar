@@ -1,54 +1,50 @@
-import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
 import * as d3 from "d3";
+import { color } from "../../Auxillary/Color";
 
-//@ts-check
-export class HighlightArrayElement {
+/**
+ * The function accepts a d3 selection that is to be highlighted,
+ * total duration of highlight animation, successive delays between
+ * each highlight and color of each highlight. Leave the delay 
+ * argument if you want all the selections to be highlighted together. 
+ * @param {d3.Selection} selection D3 selection that is to be highlighted
+ * @param {number} duration Total duration of the highlight animation for each array item
+ * @param {number} delay Delay between successive highlights. Use 0 to highlight everything at once
+ * @param {string} selColor Color to be used for highlighting
+ * @returns {Promise} Returns a promise that resolves when all highlight transitions are completed
+ */
+export async function hightlightArrayElement(selection, duration=1000, delay=0, selColor=color.BLUE) {
+    //Store all the promises returned by the various transitions in this variable
+    const transitionPromise = [];
 
-    /**
-     * @param {d3.Selection} selection 
-     * @param {ArrayDiagram} context 
-     */
-    static async hightlightElement(selection, context, tillThisIndex) {
-        const transitionPromise = [];
-        //Selection here represents an array of groups within the svg.
-        transitionPromise.push(
-            selection
-            .selectAll(`.array-element-${context.DIAGRAM_ID} rect`)
-            .filter((data, index) => index <= tillThisIndex)
-            .transition()
-            .duration(context.TRANSITION_TIME/2)
-            .delay((data, index) => index*1000)
-            .attr("width", context.ITEM_SIZE*1.1)
-            .attr("height", context.ITEM_SIZE*1.1)
-            .attr("x", -context.ITEM_SIZE*1.1/2)
-            .attr("y", -context.ITEM_SIZE*1.1/2)
-            .style("fill", (data, index) => index === tillThisIndex ? "#befcb3" : "#99d8fc")
-            .transition()
-            .duration(context.TRANSITION_TIME/2)
-            .style("fill", (data, index) => index === tillThisIndex ? "#befcb3" : "#dfe5e8")
-            .attr("width", context.ITEM_SIZE)
-            .attr("height", context.ITEM_SIZE)
-            .attr("x", -context.ITEM_SIZE/2)
-            .attr("y", -context.ITEM_SIZE/2)
-            .end()
-        );
-        
-        transitionPromise.push(
-            selection
-            .selectAll(`.array-element-${context.DIAGRAM_ID} text`)
-            .filter((data, index) => index <= tillThisIndex)
-            .transition()
-            .duration(context.TRANSITION_TIME/2)
-            .delay((data, index) => index*1000)
-            .style("font-size", "16px")
-            .transition()
-            .duration(context.TRANSITION_TIME/2)
-            .style("font-size", "14px")
-            .end()
-        );
+    //Get the item size of the item that are to be highlighted
+    const itemSize = selection.select(".array-item-rect").node().getAttribute("width");
 
-        const element = selection.selectAll("g").filter((data, index) => index == tillThisIndex);
+    //How to highlight the rect within each array item
+    transitionPromise.push(
+        selection
+        .select(".array-item-rect")
+        .transition(duration/2)
+        .delay((data, index) => index * delay)
+        .style("transform", "scale(1.1)")
+        .style("fill", selColor)
+        .transition(duration/2)
+        .style("transform", "scale(1.0)")
+        .style("fill", color.GREY)
+        .end()
+    );
+    
+    //How to highlight the text within each array item
+    transitionPromise.push(
+        selection
+        .select(".array-item-text")
+        .transition(duration/2)
+        .delay((data, index) => index * delay)
+        .style("transform", "scale(1.1)")
+        .transition(duration/2)
+        .style("transform", "scale(1.0)")
+        .end()
+    );
 
-        return await Promise.all(transitionPromise).then(() => element);
-    }
+    //Wait for all the transition promises to resolve
+    return await Promise.all(transitionPromise);
 }

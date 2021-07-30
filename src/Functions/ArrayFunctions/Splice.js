@@ -8,6 +8,7 @@ import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
  * @param  {...any} items 
  */
 export function splice(arrayDiagram, start, deleteCount, ...items) {
-    arrayDiagram.data.splice(start, deleteCount, ...items);
+    console.log(items);
+    arrayDiagram.data.splice(start, deleteCount, ...items.map(item => arrayDiagram.bindToKey(item)));
     arrayDiagram.update();
 }

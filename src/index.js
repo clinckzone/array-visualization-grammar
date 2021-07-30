@@ -1,8 +1,8 @@
 //@ts-check
 import Iroh from 'iroh/dist/iroh-node.es';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { FunctionAnimationSpec } from "./Specification/FunctionAnimationSpec";
-import { templateJsonSpec } from './Specification/TemplateJsonSpec';
+import { FunctionAnimationSpec } from "./Specifications/FunctionAnimationSpec";
+import { templateJsonSpec } from './Specifications/TemplateJsonSpec';
 
 //Compile script upon click
 const compileButton = document.getElementById("compile-button");
@@ -14,11 +14,7 @@ runButton.addEventListener('click', execute);
 
 //Initialize the javascript editor
 const jsEditor = monaco.editor.create(document.getElementById('js-editor-container'), {
-	value: 
-`//Initialize and manipulate your array here in javascript.
-const sampleArray = [1, 2, 3, 4, 5];
-sampleArray.push(3);`,
-
+	value: `//Javascript`,
 	language: 'javascript'
 });
 
@@ -55,14 +51,12 @@ function compile() {
 
 			switch(jsonSpec.callee) {
 				case "push":
-					if(e.arguments.length > 1) {
-						console.log(`Expected only a single argument to ${jsonSpec.data.name}.${jsonSpec.callee}()`);
-					}
-					else { 
-						const item = e.arguments[0];
-						jsonSpec.args.push({name: "item", value: item, type: `${typeof item}`});
-					}
+				{
+					const item = e.arguments[0];
+					jsonSpec.args.push({name: "item", value: item, type: `${typeof item}`});
+					
 					break;
+				}
 
 				case "pop":
 				 	break;
@@ -71,13 +65,40 @@ function compile() {
 					break;
 
 				case "unshift":
-					if(e.arguments.length > 1) {
-						console.log(`Expected only a single argument to ${jsonSpec.data.name}.${jsonSpec.callee}()`);
-					}
-					else { 
-						const item = e.arguments[0];
-						jsonSpec.args.push({name: "item", value: item, type: `${typeof item}`});
-					}
+				{
+					const item = e.arguments[0];
+					jsonSpec.args.push({name: "item", value: item, type: `${typeof item}`});
+					
+					break;
+				}
+
+				case "splice":
+				{
+					const start = e.arguments[0];
+					jsonSpec.args.push({name: "start", value: start, type: `${typeof start}`});
+
+					const deleteCount = e.arguments[1];
+					jsonSpec.args.push({name: "deleteCount", value: deleteCount, type: `${typeof deleteCount}`});
+
+					const items = e.arguments.slice(2);
+					jsonSpec.args.push({name: "items", value: items, type: "array"});
+					
+					break;
+				}
+
+				case "join":
+					break;
+
+				case "reverse" :
+					break;
+
+				case "slice":
+					const start = e.arguments[0];
+					jsonSpec.args.push({name: "start", value: start, type: `${typeof start}`});
+
+					const end = e.arguments[1];
+					jsonSpec.args.push({name: "end", value: end, type: `${typeof start}`});
+
 					break;
 			}
 		}
@@ -94,9 +115,9 @@ function execute() {
 	const jsonData = jsonEditor.getValue();
 
 	//Clear out all the svgs inside the svg area
-	let element = document.getElementById("svg-container");
-	while (element.firstChild) {
-		element.removeChild(element.firstChild);
+	let item = document.getElementById("svg-container");
+	while (item.firstChild) {
+		item.removeChild(item.firstChild);
 	}
 
 	const functionAnimationSpec = new FunctionAnimationSpec(JSON.parse(jsonData));
