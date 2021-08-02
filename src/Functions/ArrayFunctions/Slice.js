@@ -19,12 +19,15 @@ export async function slice(arrayDiagram, start, end) {
                             .filter((data, index) => (index >= start && index < end));
 
     //**Parametrize the duration of highlight**
-    //Highlight the selected items
-    await hightlightArrayElement(itemSelection); 
+    //Highlight the selected items and keep them selected
+    await hightlightArrayElement(itemSelection, true);
 
     //Create a copy of the selected items
     const copiedNodes = itemSelection.nodes().map(item => item.cloneNode(true));
     const copiedItems = d3.selectAll(copiedNodes.map(item => document.getElementById("svg-container").appendChild(item)));
+
+    //Remove the index from the copied array items
+    d3.selectAll(copiedItems).selectChildren(".array-item-index").remove();
 
     //Create a new Vector2D object to be used as the new position for the new array diagram
     const newArrayPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);

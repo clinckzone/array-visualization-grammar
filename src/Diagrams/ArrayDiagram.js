@@ -60,7 +60,8 @@ export class ArrayDiagram {
         .style("fill", "#fafafa")
         .style("stroke", "rgb(0, 0, 0, 0.05)")
         .style("stroke-width", "0.8")
-        .style("transform", 'translate()');
+        .style("transform", 'translate()')
+        .style("opacity", 0.0);
 
         return boundary;
     }
@@ -109,6 +110,7 @@ export class ArrayDiagram {
         return this.arrayBoundary
         .transition()
         .duration(this.TRANSITION_TIME/2)
+        .style("opacity", 1.0)
         .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING);
     }
 

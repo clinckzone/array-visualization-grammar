@@ -1,4 +1,3 @@
-//@ts-check
 import * as d3 from "d3";
 import { hightlightArrayElement } from "../../Animations/ArrayAnimations/HighlightArrayElement";
 import { translateArrayElement } from "../../Animations/ArrayAnimations/TranslateArrayElement";
@@ -29,14 +28,16 @@ export async function find(arrayDiagram, searchItem) {
 
     //**Parametrize the duration of highlight and the delay**
     //Sequentially highlight all the selected array items
-    await hightlightArrayElement(itemSelection, 1000, 1000);
+    await hightlightArrayElement(itemSelection, false, 1000);
 
     //Depending upon whether the item was found in the array or not, run two different animations
     if(foundFlag) {
-
         //Create a copy of the found items' DOM node
         const copiedNode = itemSelection.filter((data, index) => index === foundItemIndex).node().cloneNode(true);
         const copiedItem = d3.select(document.getElementById("svg-container").appendChild(copiedNode));
+
+        //Remove the index from the copied array items
+        d3.selectAll(copiedItem).selectChildren(".array-item-index").remove();
 
         //Create a new Vector2D object to be used as the new position for the new array diagram
         const newArrayPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
@@ -54,11 +55,6 @@ export async function find(arrayDiagram, searchItem) {
     else {
         //**Parametrize the duration of highlight**
         //Highlight all the elements red at once.
-        await hightlightArrayElement(itemSelection, 1000, 0, color.RED);
+        await hightlightArrayElement(itemSelection, false, color.RED);
     }
-    // nodeCopy_
-    // .select("rect")
-    // .transition()
-    // .duration(arrayDiagram.TRANSITION_TIME)
-    // .style("fill" , "#dfe5e8");
 }
