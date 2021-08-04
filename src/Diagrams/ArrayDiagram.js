@@ -15,7 +15,7 @@ export class ArrayDiagram {
      * @param {ArrayProps} properties ArrayProps object defines the properties of the array diagram
      */
     constructor(data, properties) {
-        this.data = data.map((value) => this.bindToKey(value));
+        this.data = data;
         this.properties = properties;
 
         this.DIAGRAM_ID = uuidv4(); 
@@ -112,18 +112,5 @@ export class ArrayDiagram {
         .duration(this.TRANSITION_TIME/2)
         .style("opacity", 1.0)
         .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING);
-    }
-
-    /**
-     * Binds a key with each array item in the diagram
-     * so that it can be uniquely identified by d3.
-     * @param {any} value 
-     * @returns {{key:string; value: any}}
-     */
-     bindToKey(value) {
-        return {
-            value: value,
-            key: uuidv4()
-        };
     }
 }

@@ -1,7 +1,7 @@
 //@ts-check
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { compile } from './Compile and Run/Compile';
-import { execute } from './Compile and Run/Execute';
+import { compile } from './Compile and Execute/Compile';
+import { execute } from './Compile and Execute/Execute';
 
 //Initialize the javascript editor
 const jsEditor = monaco.editor.create(document.getElementById('js-editor-container'), {
