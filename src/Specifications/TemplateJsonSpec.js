@@ -1,5 +1,8 @@
 export const templateJsonSpec = {
     data: {},
-    callee: "",
-    args: []
+    transform: [],
+    properties: {
+        style: {},
+        animation: {}
+    }
 }
