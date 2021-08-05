@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid"; 
+
 /**
  * Binds a key with each array item in the diagram
  * so that it can be uniquely identified by d3.

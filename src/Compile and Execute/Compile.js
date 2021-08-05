@@ -42,7 +42,7 @@ export function compile(jsEditor, jsonEditor) {
 					jsonSpec.transform.push(
 						{
 							type: "add", 
-							index: [data.length - 1], 
+							index: [data.length], 
 							value: [item]
 						}
 					);
