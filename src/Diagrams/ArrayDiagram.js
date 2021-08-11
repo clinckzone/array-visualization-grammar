@@ -19,12 +19,13 @@ export class ArrayDiagram {
         this.properties = properties;
 
         this.DIAGRAM_ID = uuidv4(); 
-        this.TRANSITION_TIME = 1000; //**Parametrize and externalize this transition time**
         
         this.svgContainerRef = d3.select("#svg-container");
         this.arrayBoundary = this.initializeArrayBoundary();
         this.arrayLabel = this.initializeArrayLabel();
-        this.arrayElements = this.update();
+        
+        //Initialize the array diagram
+        this.update(this.properties.INIT_TIME);
     }
 
     /**
@@ -68,18 +69,21 @@ export class ArrayDiagram {
 
     /**
      * Updates the array diagram's boundary width and the items that are in the array diagram
+     * @param {number} updateTime Total time for updating the array
+     * @param {boolean} stagger Should there be delay between successive highlights?
      * @returns {d3.Selection} D3 selction of <g> elements in the array diagram 
      */
-    update() {
+    update(updateTime, stagger=false) {
+
         //Update the array's boundary width
-        this.updateBoundary();
+        this.updateBoundary(updateTime/3);
 
         //Update the items that are in the array diagram
         const items = this.svgContainerRef
         .selectAll(`g.array-item-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key)
         .join(
-            enter => addArrayElement(enter, this.properties.ITEM_SIZE, this.TRANSITION_TIME)
+            enter => addArrayElement(enter, this.properties.ITEM_SIZE, updateTime, stagger)
                 .attr("class", `array-item-${this.DIAGRAM_ID}`)
                 .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`),
             update => {
@@ -91,14 +95,17 @@ export class ArrayDiagram {
                 //Update the array item positions
                 return update
                 .transition()
-                .duration(this.TRANSITION_TIME/2)
+                .duration(updateTime)
                 .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
             },
-            exit => removeArrayElement(exit, this.TRANSITION_TIME/2)
+            exit => removeArrayElement(exit, updateTime, stagger)
                 .transition()
-                .delay(this.TRANSITION_TIME/2)
+                .delay(updateTime)
                 .remove()
         );
+        
+        //Update the reference to array items
+        this.arrayItems = items;
 
         return items;
     }
@@ -106,10 +113,10 @@ export class ArrayDiagram {
     /**
      * Update witdh of array's boundary
      */
-    updateBoundary() {
+    updateBoundary(updateTime) {
         return this.arrayBoundary
         .transition()
-        .duration(this.TRANSITION_TIME/2)
+        .duration(updateTime/2)
         .style("opacity", 1.0)
         .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING);
     }

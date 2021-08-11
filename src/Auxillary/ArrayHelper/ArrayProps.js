@@ -9,10 +9,11 @@ export class ArrayProps {
      * @param {number} itemSize Size of each array item
      * @param {number} padding Padding space between each array item
      */
-    constructor(diagramLabel="Array", position, itemSize=30, padding=10) {
+    constructor(diagramLabel="Array", position, initTime, itemSize=30, padding=10) {
         this.DIAGRAM_LABEL = diagramLabel;
         this.POSITION = position;
         this.ITEM_SIZE = itemSize;
         this.PADDING = padding;
+        this.INIT_TIME = initTime;
     }
 }

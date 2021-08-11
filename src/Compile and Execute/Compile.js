@@ -24,7 +24,7 @@ export function compile(jsEditor, jsonEditor) {
 			}
 		}
 	);
-		
+
 	//Listen to any function calls
 	stage.addListener(Iroh.CALL)
 	.on("after",
@@ -132,6 +132,6 @@ export function compile(jsEditor, jsonEditor) {
 	eval(stage.script);
 
 	//Setting the value of the json editor
-	const jsonEditorValue = `${JSON.stringify(jsonSpec, null, 2)}`;
+	const jsonEditorValue = `${JSON.stringify(jsonSpec, null, 4)}`;
 	jsonEditor.setValue(jsonEditorValue);
 }

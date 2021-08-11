@@ -13,8 +13,12 @@ export class InterpreterSpec {
      * @param {any} rawSpec The object is obtained by directlty parsing the text from the Json editor
      */
     constructor(rawSpec) {
+        //Gets the data structure that we are animating
         this.data = new DataStructureSpec(rawSpec.data);
+
+        //Get the transformations on that data structure
         this.transform = new TransformSpec(rawSpec.transform);
+
         //Animation properties will be added later
     }
 
@@ -23,10 +27,15 @@ export class InterpreterSpec {
         const bindData = this.data.value.map((value) => bindToKey(value));
 
         //Based on the data, create an array diagram
-        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20));
+        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), this.data.duration);
         const arrayDiagram = new ArrayDiagram(bindData, arrayProps);
         
         //Applies the transformation on the array in order
-        this.transform.applyTransformation(arrayDiagram);
+        setTimeout(
+            () => {
+                this.transform.applyTransformation(arrayDiagram);   
+            },
+            this.data.duration
+        );
     }
 }
