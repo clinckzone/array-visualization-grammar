@@ -33,7 +33,7 @@ export class ArrayDiagram {
      * @returns {d3.Selection}
      */
     initializeArrayLabel() {
-        let label = this.svgContainerRef
+        const label = this.svgContainerRef
         .append("text")
         .attr("class", `array-label-${this.DIAGRAM_ID}`)
         .attr("x", `${this.properties.POSITION.x}`)
@@ -50,7 +50,7 @@ export class ArrayDiagram {
      * @returns {d3.Selection}
      */
     initializeArrayBoundary() {
-        let boundary = this.svgContainerRef
+        const boundary = this.svgContainerRef
         .append("rect")
         .attr("class", `array-boundary-${this.DIAGRAM_ID}`)
         .attr("height", this.properties.ITEM_SIZE + 2*this.properties.PADDING)

@@ -27,7 +27,7 @@ export class InterpreterSpec {
         const bindData = this.data.value.map((value) => bindToKey(value));
 
         //Based on the data, create an array diagram
-        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), this.data.duration);
+        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10, this.data.duration);
         const arrayDiagram = new ArrayDiagram(bindData, arrayProps);
         
         //Applies the transformation on the array in order

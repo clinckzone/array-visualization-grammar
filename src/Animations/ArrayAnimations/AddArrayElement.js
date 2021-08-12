@@ -23,7 +23,13 @@ export function addArrayElement(selection, itemSize, duration, stagger=false) {
     //Add the array items to the svg that are entering
     const elemEnter = selection.append("g");
 
-    elemEnter
+    //Re-arrange the indexes of the selection. Without rearranging the indexes, their
+    //indexes will remain same as the one that they have in the original array diagram.
+    //Hence, the delay will then not be calculated correctly.
+    const elemEnter_filtered = elemEnter.filter(() => true);
+
+    //Appends svg rect as item container to the item being added 
+    elemEnter_filtered
     .append("rect")
     .attr("class", "array-item-rect")
     .style("opacity", 0.0)
@@ -41,7 +47,8 @@ export function addArrayElement(selection, itemSize, duration, stagger=false) {
     .duration(duration/2)
     .style("fill", color.GREY);
     
-    elemEnter
+    //Appends svg text as value to the array item being added
+    elemEnter_filtered
     .append("text")
     .attr("class", "array-item-text")
     .text((data) => data.value)
@@ -56,10 +63,10 @@ export function addArrayElement(selection, itemSize, duration, stagger=false) {
     .style("opacity", 1.0)
     .style("font-size", "14px");  //**Parametrize the the font size in accordance with the item size**
 
-    elemEnter
+    //Appends svg text as index to the array item being added
+    elemEnter_filtered
     .append("text")
     .attr("class", "array-item-index")
-    .text((data, index) => index)
     .attr("y", itemSize/2)
     .style("opacity", 0.0)
     .style("font-size", "0px")
@@ -72,6 +79,11 @@ export function addArrayElement(selection, itemSize, duration, stagger=false) {
     .delay((data, index) => index * delay)
     .style("opacity", 1.0)
     .style("font-size", "10px"); //**Parametrize the the font size in accordance with the item size**
+
+    //Updates item index
+    elemEnter
+    .select(".array-item-index")
+    .text((data, index) => index);
 
     return elemEnter;
 }

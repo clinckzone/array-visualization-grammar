@@ -7,5 +7,8 @@
     "UPDATE": "update",
     "HIGHLIGHT": "highlight",
     "SELECT": "select",
-    "DESELECT": "deselect"
+    "DESELECT": "deselect",
+    "RETURN": "return",
+    "COMBINE": "combine",
+    "MORPH": "morph"
 }

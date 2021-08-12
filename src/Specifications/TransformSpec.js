@@ -1,9 +1,13 @@
+import * as d3 from "d3";
+import { color } from "../Auxillary/Color";
+import { Vector2D } from "../Auxillary/Vector2D";
 import { bindToKey } from "../Auxillary/BindKey";
 import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
 import { TransformDataSpec } from "./TransformDataSpec";
-import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
 import { transformType } from "../Auxillary/TransformType";
-import { color } from "../Auxillary/Color";
+import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
+import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
+import { translateArrayElement } from "../Animations/ArrayAnimations/TranslateArrayElement";
 
 export class TransformSpec {
     /**
@@ -37,13 +41,13 @@ export class TransformSpec {
                     case transformType.ADD:
                     {
                         //Sort the items in ascending order
-                        transform.item.sort((a, b) => (a.index - b.index));
+                        transform.args.item.sort((a, b) => (a.index - b.index));
                         
                         //Go through each item in the sorted array and add it in the array diagram
-                        for(let i = 0; i < transform.item.length; i++) {
+                        for(let i = 0; i < transform.args.item.length; i++) {
                             //Get the value and index of the current item in the array
-                            const index = transform.item[i].index;
-                            const value = transform.item[i].value;
+                            const index = transform.args.item[i].index;
+                            const value = transform.args.item[i].value;
 
                             //Add a new item to the array diagram and update the diagram
                             arrayDiagram.data.splice(index, 0, bindToKey(value));
@@ -56,12 +60,12 @@ export class TransformSpec {
                     case transformType.REMOVE:
                     {
                         //Sort the items in descending order
-                        transform.item.sort((a, b) => (b.index - a.index));
+                        transform.args.item.sort((a, b) => (b.index - a.index));
 
                         //Go through each item in the sorted array and remove it from the array diagram
-                        for(let i = 0; i < transform.item.length; i++) {
+                        for(let i = 0; i < transform.args.item.length; i++) {
                             //Get the index from the current item
-                            const index = transform.item[i].index;
+                            const index = transform.args.item[i].index;
 
                             //Remove the item from the array diagram and update it
                             arrayDiagram.data.splice(index, 1);
@@ -77,8 +81,8 @@ export class TransformSpec {
                         let arrayData = [];
 
                         //Create a new array data for the array diagram
-                        for(let i = 0; i < transform.item.length; i++) {
-                            const item = arrayDiagram.data.find(item => item.value === transform.item[i].value);
+                        for(let i = 0; i < transform.args.item.length; i++) {
+                            const item = arrayDiagram.data.find(item => item.value === transform.args.item[i].value);
                             arrayData.push(item);
                         }
 
@@ -91,8 +95,8 @@ export class TransformSpec {
 
                     case transformType.HIGHLIGHT:
                     {
-                        //Select the items in the array diagram that you want to highlight
-                        const selection = arrayDiagram.arrayItems.filter((data, index) => transform.item.some(item => item.index === index));
+                        //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
+                        const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
 
                         //Highlight thoses elements
                         highlightArrayElement(selection, transform.duration, transform.stagger, color.BLUE, color.GREY);
@@ -102,23 +106,67 @@ export class TransformSpec {
 
                     case transformType.SELECT:
                     {
-                        //Select the items in the array diagram that you want to highlight
-                        const selection = arrayDiagram.arrayItems.filter((data, index) => transform.item.some(item => item.index === index));
+                        //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
+                        const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
                         
                         //Select thoses elements
                         highlightArrayElement(selection, transform.duration, transform.stagger, color.BLUE, color.GREEN);
 
                         break;
                     }
+
                     case transformType.DESELECT:
                     {
-                        //Select the items in the array diagram that you want to highlight
-                        const selection = arrayDiagram.arrayItems.filter((data, index) => transform.item.some(item => item.index === index));
+                        //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
+                        const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
 
                         //Deselect thoses elements
                         highlightArrayElement(selection, transform.duration, transform.stagger, color.GREY, color.GREY);
 
                         break;
+                    }
+
+                    case transformType.RETURN:
+                    {
+                        //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
+                        let selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
+                        
+                        //Create a copy of the selection
+                        const copiedNodes = selection.nodes().map(item => item.cloneNode(true));
+                        selection = d3.selectAll(copiedNodes.map(item => document.getElementById("svg-container").appendChild(item)));
+                        
+                        //Remove the indexes of the selection
+                        selection.selectAll('.array-item-index').remove();
+
+                        //Remove the old arrayDiagram class identifier from the item
+                        selection.classed(`array-item-${arrayDiagram.DIAGRAM_ID}`, false);
+                        
+                        //Create a new Vector2D object to be used as the new position for the new array diagram
+                        const returnPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
+                        
+                        // Create a new ArrayProp object to be used for translation and for the new array diagram 
+                        const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING); 
+                        
+                        //Translate the copied selection from their old position to the new position
+                        translateArrayElement(selection, transform.args.item, arrayDiagram.properties, returnArrProp, transform.duration, transform.stagger);
+                        
+                        // //Get the data being returned
+                        // const returnData = [];
+                        // for(let i = 0; i < transform.args.item.length; i++) {
+                        //     returnData.push(JSON.parse(JSON.stringify(arrayDiagram.data[transform.args.item[i].index])));
+                        // }          
+                        
+                        break;
+                    }
+
+                    case transformType.COMBINE:
+                    {
+                        
+                    }
+
+                    case transformType.MORPH:
+                    {
+
                     }
                 }
             }, delayTime);
