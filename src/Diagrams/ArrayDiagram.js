@@ -23,9 +23,6 @@ export class ArrayDiagram {
         this.svgContainerRef = d3.select("#svg-container");
         this.arrayBoundary = this.initializeArrayBoundary();
         this.arrayLabel = this.initializeArrayLabel();
-        
-        //Initialize the array diagram
-        this.update(this.properties.INIT_TIME);
     }
 
     /**
@@ -71,41 +68,64 @@ export class ArrayDiagram {
      * Updates the array diagram's boundary width and the items that are in the array diagram
      * @param {number} updateTime Total time for updating the array
      * @param {boolean} stagger Should there be delay between successive highlights?
-     * @returns {d3.Selection} D3 selction of <g> elements in the array diagram 
+     * @returns {Promise<d3.Selection>} D3 selction of <g> elements in the array diagram 
      */
-    update(updateTime, stagger=false) {
-
-        //Update the array's boundary width
-        this.updateBoundary(updateTime/3);
-
-        //Update the items that are in the array diagram
+    async update(updateTime, stagger=false) {
+        
+        //Bind array items to array data
         const items = this.svgContainerRef
         .selectAll(`g.array-item-${this.DIAGRAM_ID}`)
-        .data(this.data, (data) => data.key)
-        .join(
-            enter => addArrayElement(enter, this.properties.ITEM_SIZE, updateTime, stagger)
-                .attr("class", `array-item-${this.DIAGRAM_ID}`)
-                .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`),
-            update => {
-                //Update the array indices
-                update
-                .select(".array-item-index")
-                .text((data, index) => index);
-
-                //Update the array item positions
-                return update
-                .transition()
-                .duration(updateTime)
-                .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
-            },
-            exit => removeArrayElement(exit, updateTime, stagger)
-                .transition()
-                .delay(updateTime)
-                .remove()
-        );
+        .data(this.data, (data) => data.key);
         
+        //Variables to hold the items that are being added, removed or updated
+        let enterElem, exitElem, updateElem;
+
+        //If items are only being added
+        if(items.enter().nodes().length !== 0 && items.exit().nodes.length === 0) {
+
+            //Update the array's boundary width
+            await this.updateBoundary(updateTime/6);
+
+            //Move the existing items to their new places
+            await items.transition()
+            .duration(updateTime/6)
+            .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
+            .end();
+            
+            //Modify the indexes of each array item 
+            items.select(".array-item-index").text((data, index) => index);
+
+            //Add items and merge with update. Remove doesn't do anything as there aren't any elements to remove.  
+            enterElem = await addArrayElement(items, this, 2*updateTime/3, stagger);
+            exitElem = await removeArrayElement(items, 0, stagger);
+            updateElem = enterElem.merge(items);
+        }
+
+        //If items are only being removed
+        if(items.exit().nodes().length !== 0 && items.enter().nodes.length === 0) {
+
+            //Remove array items
+            exitElem = await removeArrayElement(items, 2*updateTime/3, stagger);
+
+            //Move the existing items to their new places
+            await items.transition()
+            .duration(updateTime/6)
+            .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
+            .end();
+
+            //Update the array's boundary width
+            await this.updateBoundary(updateTime/6);
+            
+            //Modify the indexes of each array item 
+            items.select(".array-item-index").text((data, index) => index);
+
+            //Doesn't do anything as there aren't any elements to add
+            enterElem = await addArrayElement(items, this, 0, stagger);
+            updateElem = enterElem.merge(items);
+        }
+
         //Update the reference to array items
-        this.arrayItems = items;
+        this.arrayItems = updateElem;
 
         return items;
     }
@@ -113,11 +133,12 @@ export class ArrayDiagram {
     /**
      * Update witdh of array's boundary
      */
-    updateBoundary(updateTime) {
+    async updateBoundary(updateTime) {
         return this.arrayBoundary
         .transition()
         .duration(updateTime/2)
         .style("opacity", 1.0)
-        .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING);
+        .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING)
+        .end();
     }
 }

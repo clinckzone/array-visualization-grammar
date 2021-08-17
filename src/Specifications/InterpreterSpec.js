@@ -22,20 +22,16 @@ export class InterpreterSpec {
         //Animation properties will be added later
     }
 
-    interpret() {
+    async interpret() {
         //Bind data to key
         const bindData = this.data.value.map((value) => bindToKey(value));
 
         //Based on the data, create an array diagram
-        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10, this.data.duration);
+        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10);
         const arrayDiagram = new ArrayDiagram(bindData, arrayProps);
+        await arrayDiagram.update(this.data.duration);
         
         //Applies the transformation on the array in order
-        setTimeout(
-            () => {
-                this.transform.applyTransformation(arrayDiagram);   
-            },
-            this.data.duration
-        );
+        this.transform.applyTransformation(arrayDiagram);   
     }
 }
