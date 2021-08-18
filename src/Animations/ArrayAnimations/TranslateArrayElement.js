@@ -1,17 +1,18 @@
 import * as d3 from "d3";
+import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
 import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition";
-import { ArrayProps } from "../../Auxillary/ArrayHelper/ArrayProps";
 
 /**
  * The functions translates the given selection from its original array 
  * diagram to the new location where a new array diagram will be created.
  * @param {d3.Selection} selection 
- * @param {{index: number}} items Indexes of the array items that are to be translated 
- * @param {ArrayProps} oldArrProp ArrayProp object of the array diagram from where the item will start
- * @param {ArrayProps} newArrProp ArrayProp object of the return array diagram where the item will go to
+ * @param {number[]} fromIndex Indexes of the array items in the startArray that are to be translated from their position
+ * @param {number[]} toIndex Indexes in the endArray to which the array items will be translated to
+ * @param {ArrayDiagram} startArray The array diagram from where the item will start
+ * @param {ArrayDiagram} endArray The array diagram where the item will go to
  * @param {number} duration Total duration of the array in milliseconds.
  */
-export async function translateArrayElement(selection, items, oldArrProp, newArrProp, duration, stagger=false) {
+export async function translateArrayElement(selection, fromIndex, toIndex, startArray, endArray, duration, stagger=false) {
     //An array to store all promises
     const transformationPromises = [];
 
@@ -36,8 +37,8 @@ export async function translateArrayElement(selection, items, oldArrProp, newArr
 
             //Start and end point of translation
             const itemPathEndPoints = [
-                [arrayItemPosition(items[index].index, oldArrProp).x, arrayItemPosition(items[index].index, oldArrProp).y],
-                [arrayItemPosition(index, newArrProp).x, arrayItemPosition(index, newArrProp).y]
+                [arrayItemPosition(fromIndex[index], startArray.properties).x, arrayItemPosition(fromIndex[index], startArray.properties).y],
+                [arrayItemPosition(toIndex[index], endArray.properties).x, arrayItemPosition(toIndex[index], endArray.properties).y]
             ];
 
             //Data for the items' path

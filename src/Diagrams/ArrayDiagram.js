@@ -1,10 +1,10 @@
 //@ts-check
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid"; 
-import { addArrayElement} from "../Animations/ArrayAnimations/AddArrayElement";
-import { removeArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
-import { arrayItemPosition } from "../Auxillary/ArrayHelper/ArrayItemPosition";
 import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
+import { addArrayElement} from "../Animations/ArrayAnimations/AddArrayElement";
+import { arrayItemPosition } from "../Auxillary/ArrayHelper/ArrayItemPosition";
+import { removeArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
 
 export class ArrayDiagram {
     
@@ -76,7 +76,7 @@ export class ArrayDiagram {
         const items = this.svgContainerRef
         .selectAll(`g.array-item-${this.DIAGRAM_ID}`)
         .data(this.data, (data) => data.key);
-        
+
         //Variables to hold the items that are being added, removed or updated
         let enterElem, exitElem, updateElem;
 
@@ -95,14 +95,13 @@ export class ArrayDiagram {
             //Modify the indexes of each array item 
             items.select(".array-item-index").text((data, index) => index);
 
-            //Add items and merge with update. Remove doesn't do anything as there aren't any elements to remove.  
+            //Add items and merge with update. Nothing to remove  
             enterElem = await addArrayElement(items, this, 2*updateTime/3, stagger);
-            exitElem = await removeArrayElement(items, 0, stagger);
             updateElem = enterElem.merge(items);
         }
 
         //If items are only being removed
-        if(items.exit().nodes().length !== 0 && items.enter().nodes.length === 0) {
+        else if(items.exit().nodes().length !== 0 && items.enter().nodes.length === 0) {
 
             //Remove array items
             exitElem = await removeArrayElement(items, 2*updateTime/3, stagger);
@@ -119,9 +118,21 @@ export class ArrayDiagram {
             //Modify the indexes of each array item 
             items.select(".array-item-index").text((data, index) => index);
 
-            //Doesn't do anything as there aren't any elements to add
-            enterElem = await addArrayElement(items, this, 0, stagger);
-            updateElem = enterElem.merge(items);
+            //Since nothing has been added
+            updateElem = items;
+        }
+
+        //If the items are neither being removed or added
+        else {
+            
+            //Update the array's boundary width
+            await this.updateBoundary(updateTime);
+
+            //Modify the indexes of each array item 
+            items.select(".array-item-index").text((data, index) => index);
+
+            //Since nothing has been added
+            updateElem = items;
         }
 
         //Update the reference to array items

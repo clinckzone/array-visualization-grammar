@@ -1,5 +1,5 @@
-//@ts-check
 import * as d3 from "d3";
+import { v4 as uuidv4 } from "uuid";
 import { color } from "../Auxillary/Color";
 import { Vector2D } from "../Auxillary/Vector2D";
 import { bindToKey } from "../Auxillary/BindKey";
@@ -7,8 +7,8 @@ import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
 import { TransformDataSpec } from "./TransformDataSpec";
 import { transformType } from "../Auxillary/TransformType";
 import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
+import { returnArrayElement } from "../Animations/ArrayAnimations/ReturnArrayElement";
 import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
-import { translateArrayElement } from "../Animations/ArrayAnimations/TranslateArrayElement";
 
 export class TransformSpec {
     /**
@@ -24,11 +24,8 @@ export class TransformSpec {
      * Applies various tranformations to the passed array
      * @param {ArrayDiagram} arrayDiagram 
      */
-    async applyTransformation(arrayDiagram) {
-        // Each transformation will be triggered once the previous one is finished. 
-        // Since the first one doesn't need any delay, hence 0 for i = 0. 
-        let delayTime = 0;
-
+    async applyTransformation(arrayDiagram, returnArray=null) {
+        
         //Go through each 
         for(let i = 0; i < this.transformation.length; i++) {
             //The current transformation
@@ -129,24 +126,33 @@ export class TransformSpec {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
                     let selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
                     
-                    //Create a copy of the selection
-                    const copiedNodes = selection.nodes().map(item => item.cloneNode(true));
-                    selection = d3.selectAll(copiedNodes.map(item => document.getElementById("svg-container").appendChild(item)));
-                    
-                    //Remove the indexes of the selection
-                    selection.selectAll('.array-item-index').remove();
+                    //If returnArray is null, then create one
+                    if(returnArray === null) {
+                        //Create a new Vector2D object to be used as the new position for the new array diagram
+                        const returnPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
+    
+                        // Create a new ArrayProp object to be used for translation and for the new array diagram 
+                        const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING); 
+                        
+                        //Get the data that the returned array will store with unique keys
+                        const returnArrData = [];
+                        for(let i = 0; i < transform.args.item.length; i++) {
+                            const data = arrayDiagram.data[i];
+                            returnArrData.push({ value: data.value, key: uuidv4() });
+                        }
 
-                    //Remove the old arrayDiagram class identifier from the item
-                    selection.classed(`array-item-${arrayDiagram.DIAGRAM_ID}`, false);
-                    
-                    //Create a new Vector2D object to be used as the new position for the new array diagram
-                    const returnPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
-                    
-                    // Create a new ArrayProp object to be used for translation and for the new array diagram 
-                    const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING); 
-                    
-                    //Translate the copied selection from their old position to the new position
-                    await translateArrayElement(selection, transform.args.item, arrayDiagram.properties, returnArrProp, transform.duration, transform.stagger);     
+                        //Create a new array that will store returned values
+                        returnArray = new ArrayDiagram(returnArrData, returnArrProp);
+                    }
+                    //If it's not null then add the data corresponding to the returned items in the returnArray with unique keys
+                    else {
+                        for(let i = 0; i < transform.args.item.length; i++) {
+                            const data = arrayDiagram.data[i];
+                            returnArray.data.push({ value: data.value, key: uuidv4() });
+                        }
+                    }
+
+                    await returnArrayElement(selection, arrayDiagram, returnArray, transform.args.item, transform.duration, transform.stagger);
                     
                     break;
                 }
@@ -162,5 +168,7 @@ export class TransformSpec {
                 }
             }
         }
+
+        return returnArray;
     }
 }
