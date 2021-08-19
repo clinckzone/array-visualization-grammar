@@ -16,8 +16,9 @@ export class InterpreterSpec {
         //Gets the data structure that we are animating
         this.data = new DataStructureSpec(rawSpec.data);
 
-        //Get the transformations on that data structure
-        this.transform = new TransformSpec(rawSpec.transform);
+        //Get the transformations on the data structure
+        this.transform = rawSpec.transform.map(item => (new TransformSpec(item)));
+        console.log(this.transform);
 
         //Animation properties will be added later
     }
@@ -28,10 +29,14 @@ export class InterpreterSpec {
 
         //Based on the data, create an array diagram
         const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10);
-        const arrayDiagram = new ArrayDiagram(bindData, arrayProps);
+        let arrayDiagram = new ArrayDiagram(bindData, arrayProps);
         await arrayDiagram.update(this.data.duration);
         
         //Applies the transformation on the array in order
-        this.transform.applyTransformation(arrayDiagram);   
+        for(let i = 0; i < this.transform.length; i++){
+            console.log(arrayDiagram.data);
+            const returnArray = await this.transform[i].applyTransformation(arrayDiagram);
+            arrayDiagram = returnArray;
+        }  
     }
 }

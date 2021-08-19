@@ -23,10 +23,12 @@ export class TransformSpec {
 
     /**
      * Applies various tranformations to the passed array
-     * @param {ArrayDiagram} arrayDiagram 
+     * @param {ArrayDiagram} arrayDiagram Array Diagram on which transformations will be performed
      */
-    async applyTransformation(arrayDiagram, returnArray=null) {
-        
+    async applyTransformation(arrayDiagram) {
+        //Initialize the returnArray as null
+        let returnArray = null;
+
         //Go through each 
         for(let i = 0; i < this.transformation.length; i++) {
             //The current transformation

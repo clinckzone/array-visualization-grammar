@@ -18,8 +18,6 @@ export async function morphArrayElement(selection, values, duration, stagger) {
         duration = duration/(selection.size());
         delay = duration;
     }
-    console.log(selection.select("rect")
-    .merge(selection.select("text")));
 
     transformationPromises.push(
         selection.select("rect")
