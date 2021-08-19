@@ -7,6 +7,7 @@ import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
 import { TransformDataSpec } from "./TransformDataSpec";
 import { transformType } from "../Auxillary/TransformType";
 import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
+import { morphArrayElement } from "../Animations/ArrayAnimations/MorphArrayElements";
 import { returnArrayElement } from "../Animations/ArrayAnimations/ReturnArrayElement";
 import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
 
@@ -124,7 +125,7 @@ export class TransformSpec {
                 case transformType.RETURN:
                 {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    let selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
+                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
                     
                     //If returnArray is null, then create one
                     if(returnArray === null) {
@@ -152,7 +153,11 @@ export class TransformSpec {
                         }
                     }
 
-                    await returnArrayElement(selection, arrayDiagram, returnArray, transform.args.item, transform.duration, transform.stagger);
+                    //Get the indexes of the items being returned
+                    const index = transform.args.item.map(item => item.index);
+
+                    //Return items
+                    await returnArrayElement(selection, arrayDiagram, returnArray, index, transform.duration, transform.stagger);
                     
                     break;
                 }
@@ -164,7 +169,20 @@ export class TransformSpec {
 
                 case transformType.MORPH:
                 {
+                    //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
+                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
 
+                    //Get the indexes and values as seperate arrays from transform.args.item
+                    const index = transform.args.item.map(item => item.index);
+                    const value = transform.args.item.map(item => item.value);
+
+                    //Only change values in the arrayDiagram.data array and not keys
+                    for(let i = 0; i < transform.args.item.length; i++) {
+                        arrayDiagram.data[index[i]].value = value[i];
+                    }
+
+                    //Morph the elements to the corresponding values specified in the arguments
+                    await morphArrayElement(selection, value, transform.duration, transform.stagger);
                 }
             }
         }

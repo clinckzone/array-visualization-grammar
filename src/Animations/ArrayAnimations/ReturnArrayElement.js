@@ -9,11 +9,11 @@ import { translateArrayElement } from "./TranslateArrayElement";
  * @param {d3.Selection} selection The selection of items that you want to return 
  * @param {ArrayDiagram} arrayDiagram The array diagram from which you want to return elements
  * @param {ArrayDiagram} returnArray The array diagram which will contain the returned elements
- * @param {{index: number}[]} item The indexes of the selected items
+ * @param {number[]} index The indexes of the selected items
  * @param {number} duration The total duration of the transformation
  * @param {boolean} stagger Do you want the transformation animation staggered?
  */
-export async function returnArrayElement(selection, arrayDiagram, returnArray, item, duration, stagger) {
+export async function returnArrayElement(selection, arrayDiagram, returnArray, index, duration, stagger) {
 
     //Get the length of the selection
     const selLength = selection.nodes().length;
@@ -26,7 +26,7 @@ export async function returnArrayElement(selection, arrayDiagram, returnArray, i
     selection.classed(`array-item-${arrayDiagram.DIAGRAM_ID}`, false);
     
     //Indexes of the array items in the arrayDiagram that are to be translated from their position
-    const fromIndex = item.map(item => item.index);
+    const fromIndex = index;
 
     //Indexes in the returnArray to which the array items will be translated to
     const toIndex = returnArray.data.map((item, index, array) => (array.length - selLength + index));
