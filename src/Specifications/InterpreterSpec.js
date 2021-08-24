@@ -5,6 +5,8 @@ import { Vector2D } from "../Auxillary/Vector2D";
 import { ArrayDiagram } from '../Diagrams/ArrayDiagram';
 import { TransformSpec } from "./TransformSpec";
 import { bindToKey } from "../Auxillary/BindKey";
+import { StyleSpec } from "./StyleSpec";
+import { AnimationSpec } from "./AnimationSpec";
 
 export class InterpreterSpec {
     /**
@@ -15,12 +17,19 @@ export class InterpreterSpec {
     constructor(rawSpec) {
         //Gets the data structure that we are animating
         this.data = new DataStructureSpec(rawSpec.data);
+        
+        //Get the animation settings
+        rawSpec.animation = rawSpec.animation !== undefined ? rawSpec.animation : {};
+        this.animation = new AnimationSpec(rawSpec.animation);
 
         //Get the transformations on the data structure
-        this.transform = rawSpec.transform.map(item => (new TransformSpec(item)));
-        console.log(this.transform);
-
-        //Animation properties will be added later
+        rawSpec.transform = rawSpec.transform !== undefined ? rawSpec.transform : [];
+        this.transform = rawSpec.transform.map(item => new TransformSpec(item, this.animation));
+        
+        //Get the style settings
+        rawSpec.style = rawSpec.style !== undefined ? rawSpec.style : {};
+        this.style = new StyleSpec(rawSpec.style);
+    
     }
 
     async interpret() {
@@ -34,9 +43,13 @@ export class InterpreterSpec {
         
         //Applies the transformation on the array in order
         for(let i = 0; i < this.transform.length; i++){
-            console.log(arrayDiagram.data);
             const returnArray = await this.transform[i].applyTransformation(arrayDiagram);
-            arrayDiagram = returnArray;
+            try { 
+                arrayDiagram = returnArray; 
+            }
+            catch { 
+                throw "Nothing after this"
+            }
         }  
     }
 }

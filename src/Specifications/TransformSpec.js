@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid";
 import { color } from "../Auxillary/Color";
+import { AnimationSpec } from "./AnimationSpec";
 import { Vector2D } from "../Auxillary/Vector2D";
 import { bindToKey } from "../Auxillary/BindKey";
 import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
@@ -9,6 +10,7 @@ import { transformType } from "../Auxillary/TransformType";
 import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
 import { morphArrayElement } from "../Animations/ArrayAnimations/MorphArrayElements";
 import { returnArrayElement } from "../Animations/ArrayAnimations/ReturnArrayElement";
+import { combineArrayElement } from "../Animations/ArrayAnimations/CombineArrayElement";
 import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
 
 export class TransformSpec {
@@ -16,9 +18,14 @@ export class TransformSpec {
      * TransformSpec stores all the transformation data inside itself
      * and is able to execute the stored transformation data. 
      * @param {any[]} rawSpec Raw specification for the transformation that are to be applied on the array data
+     * @param {AnimationSpec} animSpec Animation specification object that contains specification for each transformation 
      */
-    constructor(rawSpec) {
-        this.transformation = rawSpec.map(item => new TransformDataSpec(item));
+    constructor(rawSpec, animSpec) {
+        this.transformation = rawSpec.map(item => {
+            //Retrieve and pass the animation settings for a specific transformation
+            const transformAnimSpec = animSpec.transform.find(transformAnimSpec => transformAnimSpec.type === item.type);
+            return new TransformDataSpec(item, transformAnimSpec);
+        });
     }
 
     /**
@@ -166,7 +173,21 @@ export class TransformSpec {
 
                 case transformType.COMBINE:
                 {
+                    //Parse input indexes that are to be combined into an array
+                    const combineIndexes = transform.args.item.map(item => (item.index.split("=>")).map(item => parseInt(item)));
                     
+                    //Duration of the transformation
+                    const combineDuration = transform.duration/combineIndexes.length;
+                    
+                    for(let i = 0; i < combineIndexes.length; i++) {
+                        //Get the selection
+                        const selection = d3.selectAll(combineIndexes[i].map((item) => arrayDiagram.arrayItems.nodes()[item]));
+
+                        //Combine the selection
+                        await  combineArrayElement(selection, combineIndexes[i], arrayDiagram, combineDuration, transform.stagger);
+                    }
+
+                    break;
                 }
 
                 case transformType.MORPH:
@@ -185,6 +206,8 @@ export class TransformSpec {
 
                     //Morph the elements to the corresponding values specified in the arguments
                     await morphArrayElement(selection, value, transform.duration, transform.stagger);
+
+                    break;
                 }
             }
         }

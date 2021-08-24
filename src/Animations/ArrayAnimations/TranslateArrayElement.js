@@ -12,7 +12,7 @@ import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition
  * @param {ArrayDiagram} endArray The array diagram where the item will go to
  * @param {number} duration Total duration of the array in milliseconds.
  */
-export async function translateArrayElement(selection, fromIndex, toIndex, startArray, endArray, duration, stagger=false) {
+export async function translateArrayElement(selection, fromIndex, toIndex, startArray, endArray, duration, stagger) {
     //An array to store all promises
     const transformationPromises = [];
 
