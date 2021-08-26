@@ -1,6 +1,5 @@
 //@ts-check
 import * as d3 from "d3";
-import { color } from "../../Auxillary/Color";
 
 /**
  * The function highlights the selection passed to it either sequencially
@@ -10,7 +9,7 @@ import { color } from "../../Auxillary/Color";
  * @param {boolean} stagger Should there be delay between successive highlights?
  * @param {string} highColor Color to be used for highlighting
  */
-export async function highlightArrayElement(selection, duration, stagger=false, highColor=color.BLUE, selColor=color.GREY) {
+export async function highlightArrayElement(selection, duration, stagger, highColor, selColor) {
     //An array to store all promises
     const transformationPromises = [];
 

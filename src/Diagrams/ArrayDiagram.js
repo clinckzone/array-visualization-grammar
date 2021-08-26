@@ -2,16 +2,13 @@
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid"; 
 import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
-import { addArrayElement} from "../Animations/ArrayAnimations/AddArrayElement";
-import { arrayItemPosition } from "../Auxillary/ArrayHelper/ArrayItemPosition";
-import { removeArrayElement } from "../Animations/ArrayAnimations/RemoveArrayElement";
 
 export class ArrayDiagram {
     
     /**
      * Array Diagram object defines the diagram for an array. Pass it
      * the data and properties in order to initialize the object.
-     * @param {any[]} data  Data that the array diagram holds and displays
+     * @param {number[]} data  Data that the array diagram holds and displays
      * @param {ArrayProps} properties ArrayProps object defines the properties of the array diagram
      */
     constructor(data, properties) {
@@ -20,9 +17,9 @@ export class ArrayDiagram {
 
         this.DIAGRAM_ID = uuidv4(); 
         
-        this.svgContainerRef = d3.select("#svg-container");
         this.arrayBoundary = this.initializeArrayBoundary();
         this.arrayLabel = this.initializeArrayLabel();
+        this.arrayItems = null;
     }
 
     /**
@@ -30,7 +27,7 @@ export class ArrayDiagram {
      * @returns {d3.Selection}
      */
     initializeArrayLabel() {
-        const label = this.svgContainerRef
+        const label = this.properties.SVG_CONTAINER
         .append("text")
         .attr("class", `array-label-${this.DIAGRAM_ID}`)
         .attr("x", `${this.properties.POSITION.x}`)
@@ -43,11 +40,11 @@ export class ArrayDiagram {
     }
 
     /**
-     * Create a rect svg for the array diagram's boudnary
+     * Create a rect svg for the array diagram's boundary
      * @returns {d3.Selection}
      */
     initializeArrayBoundary() {
-        const boundary = this.svgContainerRef
+        const boundary = this.properties.SVG_CONTAINER
         .append("rect")
         .attr("class", `array-boundary-${this.DIAGRAM_ID}`)
         .attr("height", this.properties.ITEM_SIZE + 2*this.properties.PADDING)
@@ -62,94 +59,5 @@ export class ArrayDiagram {
         .style("opacity", 0.0);
 
         return boundary;
-    }
-
-    /**
-     * Updates the array diagram's boundary width and the items that are in the array diagram
-     * @param {number} updateTime Total time for updating the array
-     * @param {boolean} stagger Should there be delay between successive highlights?
-     * @returns {Promise<d3.Selection>} D3 selction of <g> elements in the array diagram 
-     */
-    async update(updateTime, stagger=false) {
-        
-        //Bind array items to array data
-        const items = this.svgContainerRef
-        .selectAll(`g.array-item-${this.DIAGRAM_ID}`)
-        .data(this.data, (data) => data.key);
-
-        //Variables to hold the items that are being added, removed or updated
-        let enterElem, exitElem, updateElem;
-
-        //If items are only being added
-        if(items.enter().nodes().length !== 0 && items.exit().nodes.length === 0) {
-
-            //Update the array's boundary width
-            await this.updateBoundary(updateTime/6);
-
-            //Move the existing items to their new places
-            await items.transition()
-            .duration(updateTime/6)
-            .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
-            .end();
-            
-            //Modify the indexes of each array item 
-            items.select(".array-item-index").text((data, index) => index);
-
-            //Add items and merge with update. Nothing to remove  
-            enterElem = await addArrayElement(items, this, 2*updateTime/3, stagger);
-            updateElem = enterElem.merge(items);
-        }
-
-        //If items are only being removed
-        else if(items.exit().nodes().length !== 0 && items.enter().nodes.length === 0) {
-
-            //Remove array items
-            exitElem = await removeArrayElement(items, 2*updateTime/3, stagger);
-
-            //Move the existing items to their new places
-            await items.transition()
-            .duration(updateTime/6)
-            .attr("transform", (data, index) => `translate(${arrayItemPosition(index, this.properties).x}, ${arrayItemPosition(index, this.properties).y})`)
-            .end();
-
-            //Update the array's boundary width
-            await this.updateBoundary(updateTime/6);
-            
-            //Modify the indexes of each array item 
-            items.select(".array-item-index").text((data, index) => index);
-
-            //Since nothing has been added
-            updateElem = items;
-        }
-
-        //If the items are neither being removed or added
-        else {
-            
-            //Update the array's boundary width
-            await this.updateBoundary(updateTime);
-
-            //Modify the indexes of each array item 
-            items.select(".array-item-index").text((data, index) => index);
-
-            //Since nothing has been added
-            updateElem = items;
-        }
-
-        //Update the reference to array items
-        this.arrayItems = updateElem;
-
-        return items;
-    }
-
-    /**
-     * Update witdh of array's boundary
-     */
-    async updateBoundary(updateTime) {
-        return this.arrayBoundary
-        .transition()
-        .duration(updateTime/2)
-        .style("opacity", 1.0)
-        .attr("width", (this.properties.ITEM_SIZE + this.properties.PADDING) * this.data.length + this.properties.PADDING)
-        .end();
     }
 }

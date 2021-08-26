@@ -1,5 +1,7 @@
+//@ts-check
 import * as d3 from "d3";
 import { v4 as uuidv4 } from "uuid";
+import { StyleSpec } from "./StyleSpec";
 import { color } from "../Auxillary/Color";
 import { AnimationSpec } from "./AnimationSpec";
 import { Vector2D } from "../Auxillary/Vector2D";
@@ -12,15 +14,18 @@ import { morphArrayElement } from "../Animations/ArrayAnimations/MorphArrayEleme
 import { returnArrayElement } from "../Animations/ArrayAnimations/ReturnArrayElement";
 import { combineArrayElement } from "../Animations/ArrayAnimations/CombineArrayElement";
 import { highlightArrayElement } from "../Animations/ArrayAnimations/HighlightArrayElement";
+import { updateArrayDiagram } from "../Animations/ArrayAnimations/UpdateArrayDiagram";
 
 export class TransformSpec {
     /**
      * TransformSpec stores all the transformation data inside itself
      * and is able to execute the stored transformation data. 
      * @param {any[]} rawSpec Raw specification for the transformation that are to be applied on the array data
-     * @param {AnimationSpec} animSpec Animation specification object that contains specification for each transformation 
+     * @param {AnimationSpec} animSpec Animation specification object that contains specification for each transformation
+     * @param {StyleSpec} styleSpec Style specification object that contains specifications for styling 
      */
-    constructor(rawSpec, animSpec) {
+    constructor(rawSpec, animSpec, styleSpec) {
+        this.style = styleSpec;
         this.transformation = rawSpec.map(item => {
             //Retrieve and pass the animation settings for a specific transformation
             const transformAnimSpec = animSpec.transform.find(transformAnimSpec => transformAnimSpec.type === item.type);
@@ -58,7 +63,7 @@ export class TransformSpec {
                         arrayDiagram.data.splice(index, 0, bindToKey(value));
                     }
 
-                    await arrayDiagram.update(transform.duration, transform.stagger);
+                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
                     break;
                 }
 
@@ -75,7 +80,7 @@ export class TransformSpec {
                         //Remove the item from the array diagram and update it
                         arrayDiagram.data.splice(index, 1);
                     }
-                    await arrayDiagram.update(transform.duration, transform.stagger);
+                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
 
                     break;
                 }
@@ -93,7 +98,7 @@ export class TransformSpec {
 
                     //Assign the new and rearranged array data to the array diagram 
                     arrayDiagram.data = arrayData;
-                    await arrayDiagram.update(transform.duration);
+                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
 
                     break;
                 }
@@ -142,7 +147,7 @@ export class TransformSpec {
                         const returnPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
     
                         // Create a new ArrayProp object to be used for translation and for the new array diagram 
-                        const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING); 
+                        const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING, d3.select("#svg-container")); 
                         
                         //Get the data that the returned array will store with unique keys
                         const returnArrData = [];

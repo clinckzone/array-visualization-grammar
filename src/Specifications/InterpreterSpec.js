@@ -1,4 +1,5 @@
 //@ts-check
+import * as d3 from "d3";
 import { DataStructureSpec } from "./DataStructureSpec";
 import { ArrayProps } from '../Auxillary/ArrayHelper/ArrayProps';
 import { Vector2D } from "../Auxillary/Vector2D";
@@ -7,6 +8,7 @@ import { TransformSpec } from "./TransformSpec";
 import { bindToKey } from "../Auxillary/BindKey";
 import { StyleSpec } from "./StyleSpec";
 import { AnimationSpec } from "./AnimationSpec";
+import { updateArrayDiagram } from "../Animations/ArrayAnimations/UpdateArrayDiagram";
 
 export class InterpreterSpec {
     /**
@@ -21,14 +23,14 @@ export class InterpreterSpec {
         //Get the animation settings
         rawSpec.animation = rawSpec.animation !== undefined ? rawSpec.animation : {};
         this.animation = new AnimationSpec(rawSpec.animation);
-
-        //Get the transformations on the data structure
-        rawSpec.transform = rawSpec.transform !== undefined ? rawSpec.transform : [];
-        this.transform = rawSpec.transform.map(item => new TransformSpec(item, this.animation));
-        
+     
         //Get the style settings
         rawSpec.style = rawSpec.style !== undefined ? rawSpec.style : {};
         this.style = new StyleSpec(rawSpec.style);
+
+        //Get the transformations on the data structure
+        rawSpec.transform = rawSpec.transform !== undefined ? rawSpec.transform : [];
+        this.transform = rawSpec.transform.map(item => new TransformSpec(item, this.animation, this.style));
     
     }
 
@@ -37,9 +39,10 @@ export class InterpreterSpec {
         const bindData = this.data.value.map((value) => bindToKey(value));
 
         //Based on the data, create an array diagram
-        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10);
+        const arrayProps = new ArrayProps(this.data.name, new Vector2D(10, 20), 30, 10, d3.select("#svg-container"));
         let arrayDiagram = new ArrayDiagram(bindData, arrayProps);
-        await arrayDiagram.update(this.data.duration);
+
+        await updateArrayDiagram(arrayDiagram, this.data.duration, false);
         
         //Applies the transformation on the array in order
         for(let i = 0; i < this.transform.length; i++){

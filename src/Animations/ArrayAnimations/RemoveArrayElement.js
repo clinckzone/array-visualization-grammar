@@ -5,14 +5,15 @@ import { color } from "../../Auxillary/Color";
 /**
  * The function removes the items in the selection from the svg. 
  * Items at the rightmost index are removed first. 
- * @param {d3.Selection} selection Selection that is to be removed from the array diagram 
+ * @param {d3.Selection} exitSelection Selection that is to be removed from the array diagram 
  * @param {number} duration Total duration of the remove animation
  * @param {boolean} stagger Should there be delay between successive removals?
  * @returns {Promise<d3.Selection>} Returns a d3 selection of items that are to be removed from the array diagram
  */
-export async function removeArrayElement(selection, duration, stagger=false) {
+export async function removeArrayElement(exitSelection, duration, stagger) {
+    
     //Reference to elements that are being removed
-    let exitElem = selection.exit();
+    let exitElem = exitSelection;
 
     //An array to store all promises
     const transformationPromises = [];
@@ -22,7 +23,7 @@ export async function removeArrayElement(selection, duration, stagger=false) {
 
     //If that is the case, calculate duration and delay for each item
     if(stagger === true) {
-        duration = duration/(selection.size());
+        duration = duration/(exitSelection.size());
         delay = duration;
     }
 

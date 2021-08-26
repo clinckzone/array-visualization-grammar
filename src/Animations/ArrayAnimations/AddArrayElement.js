@@ -6,13 +6,14 @@ import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition
 
 /**
  * The function adds the elements given in the index. With the leftmost item being added first.
- * @param {d3.Selection} selection Array items that are to be created in the array diagram
+ * @param {d3.Selection} enterSelection Array items that are to be created in the array diagram
  * @param {ArrayDiagram} arrayDiagram Size of the array items that need to be created
  * @param {number} duration Total duration of the add animation
  * @param {boolean} stagger Should there be delay between successive additions?
  * @returns {Promise<d3.Selection>} Returns the selection of array items in the diagram that have been newly created
  */
-export async function addArrayElement(selection, arrayDiagram, duration, stagger=false) {
+export async function addArrayElement(enterSelection, arrayDiagram, duration, stagger) {
+    
     //An array to store all promises
     const transformationPromises = [];
 
@@ -21,12 +22,12 @@ export async function addArrayElement(selection, arrayDiagram, duration, stagger
 
     //If that is the case, calculate duration and delay for each item
     if(stagger === true) {
-        duration = duration/(selection.size());
+        duration = duration/(enterSelection.size());
         delay = duration;
     }
 
     //Add the array items to the svg that are entering
-    const elemEnter = selection.enter().append("g");
+    const elemEnter = enterSelection.append("g");
 
     //Arranging the position of array items in the array
     elemEnter

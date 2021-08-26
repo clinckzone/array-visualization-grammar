@@ -2,6 +2,7 @@
 import * as d3 from "d3";
 import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
 import { translateArrayElement } from "./TranslateArrayElement";
+import { updateArrayDiagram } from "./UpdateArrayDiagram";
 
 /**
  * Creates a copy of the elements that are being returned and translates them
@@ -40,5 +41,5 @@ export async function returnArrayElement(selection, arrayDiagram, returnArray, i
     selection.datum((data, index) => returnArray.data[toIndex[index]]);
     selection.raise();
 
-    await returnArray.update(duration/4);
+    await updateArrayDiagram(returnArray, duration/4, stagger);
 }
