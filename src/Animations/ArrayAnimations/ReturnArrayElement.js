@@ -24,7 +24,7 @@ export async function returnArrayElement(selection, arrayDiagram, returnArray, i
     selection = d3.selectAll(copiedNodes.map(item => document.getElementById("svg-container").appendChild(item)));
 
     //Remove the old arrayDiagram class identifier from the item
-    selection.classed(`array-item-${arrayDiagram.DIAGRAM_ID}`, false);
+    selection.classed(`array-item-${arrayDiagram.properties.DIAGRAM_ID}`, false);
     
     //Indexes of the array items in the arrayDiagram that are to be translated from their position
     const fromIndex = index;
@@ -37,7 +37,7 @@ export async function returnArrayElement(selection, arrayDiagram, returnArray, i
 
     //Make the copied selection recognizable by the returned 
     //array by changing its class and the bound datum
-    selection.attr("class", `array-item-${returnArray.DIAGRAM_ID}`);
+    selection.attr("class", `array-item-${returnArray.properties.DIAGRAM_ID}`);
     selection.datum((data, index) => returnArray.data[toIndex[index]]);
     selection.raise();
 

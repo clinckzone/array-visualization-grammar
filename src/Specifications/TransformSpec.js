@@ -1,15 +1,12 @@
 //@ts-check
 import * as d3 from "d3";
-import { v4 as uuidv4 } from "uuid";
 import { StyleSpec } from "./StyleSpec";
 import { color } from "../Auxillary/Color";
 import { AnimationSpec } from "./AnimationSpec";
-import { Vector2D } from "../Auxillary/Vector2D";
-import { bindToKey } from "../Auxillary/BindKey";
 import { ArrayDiagram } from "../Diagrams/ArrayDiagram";
 import { TransformDataSpec } from "./TransformDataSpec";
 import { transformType } from "../Auxillary/TransformType";
-import { ArrayProps } from "../Auxillary/ArrayHelper/ArrayProps";
+import { ArrayProp } from "../Auxillary/ArrayHelper/ArrayProp";
 import { morphArrayElement } from "../Animations/ArrayAnimations/MorphArrayElements";
 import { returnArrayElement } from "../Animations/ArrayAnimations/ReturnArrayElement";
 import { combineArrayElement } from "../Animations/ArrayAnimations/CombineArrayElement";
@@ -19,16 +16,18 @@ import { updateArrayDiagram } from "../Animations/ArrayAnimations/UpdateArrayDia
 export class TransformSpec {
     /**
      * TransformSpec stores all the transformation data inside itself
-     * and is able to execute the stored transformation data. 
+     * and is able to execute the stored transformation data.
      * @param {any[]} rawSpec Raw specification for the transformation that are to be applied on the array data
      * @param {AnimationSpec} animSpec Animation specification object that contains specification for each transformation
-     * @param {StyleSpec} styleSpec Style specification object that contains specifications for styling 
+     * @param {StyleSpec} styleSpec Style specification object that contains specifications for styling
      */
     constructor(rawSpec, animSpec, styleSpec) {
         this.style = styleSpec;
-        this.transformation = rawSpec.map(item => {
+        this.transformation = rawSpec.map((item) => {
             //Retrieve and pass the animation settings for a specific transformation
-            const transformAnimSpec = animSpec.transform.find(transformAnimSpec => transformAnimSpec.type === item.type);
+            const transformAnimSpec = animSpec.transform.find(
+                (transformAnimSpec) => transformAnimSpec.type === item.type
+            );
             return new TransformDataSpec(item, transformAnimSpec);
         });
     }
@@ -41,176 +40,281 @@ export class TransformSpec {
         //Initialize the returnArray as null
         let returnArray = null;
 
-        //Go through each 
-        for(let i = 0; i < this.transformation.length; i++) {
+        //Go through each
+        for (let i = 0; i < this.transformation.length; i++) {
             //The current transformation
             const transform = this.transformation[i];
 
             //Match the transformation type
-            switch(transform.type) {
-                case transformType.ADD:
-                {
+            switch (transform.type) {
+                case transformType.INITIALIZE: {
+                    await updateArrayDiagram(
+                        arrayDiagram,
+                        transform.duration,
+                        transform.stagger
+                    );
+                    break;
+                }
+
+                case transformType.ADD: {
+                    //Store a reference of the array diagrams' data
+                    const data = arrayDiagram.data;
+
                     //Sort the items in ascending order
-                    transform.args.item.sort((a, b) => (a.index - b.index));
-                    
+                    transform.args.item.sort((a, b) => a.index - b.index);
+
                     //Go through each item in the sorted array and add it in the array diagram
-                    for(let i = 0; i < transform.args.item.length; i++) {
+                    for (let i = 0; i < transform.args.item.length; i++) {
                         //Get the value and index of the current item in the array
                         const index = transform.args.item[i].index;
                         const value = transform.args.item[i].value;
 
                         //Add a new item to the array diagram and update the diagram
-                        arrayDiagram.data.splice(index, 0, bindToKey(value));
+                        data.splice(index, 0, value);
                     }
 
-                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
+                    arrayDiagram.data = data;
+                    await updateArrayDiagram(
+                        arrayDiagram,
+                        transform.duration,
+                        transform.stagger
+                    );
                     break;
                 }
 
-                case transformType.REMOVE:
-                {
+                case transformType.REMOVE: {
+                    //Store a copy of the array diagrams' data
+                    const data = arrayDiagram.data;
+
                     //Sort the items in descending order
-                    transform.args.item.sort((a, b) => (b.index - a.index));
+                    transform.args.item.sort((a, b) => b.index - a.index);
 
                     //Go through each item in the sorted array and remove it from the array diagram
-                    for(let i = 0; i < transform.args.item.length; i++) {
+                    for (let i = 0; i < transform.args.item.length; i++) {
                         //Get the index from the current item
                         const index = transform.args.item[i].index;
 
                         //Remove the item from the array diagram and update it
-                        arrayDiagram.data.splice(index, 1);
+                        data.splice(index, 1);
                     }
-                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
 
+                    arrayDiagram.data = data;
+                    await updateArrayDiagram(
+                        arrayDiagram,
+                        transform.duration,
+                        transform.stagger
+                    );
                     break;
                 }
 
-                case transformType.UPDATE:
-                {
+                case transformType.UPDATE: {
                     //Variable to hold the new array data for the array diagram
-                    let arrayData = [];
+                    const arrayData = [];
 
                     //Create a new array data for the array diagram
-                    for(let i = 0; i < transform.args.item.length; i++) {
-                        const item = arrayDiagram.data.find(item => item.value === transform.args.item[i].value);
+                    for (let i = 0; i < transform.args.item.length; i++) {
+                        const item = arrayDiagram.data.find(
+                            (item) =>
+                                item.value === transform.args.item[i].value
+                        );
                         arrayData.push(item);
                     }
 
-                    //Assign the new and rearranged array data to the array diagram 
+                    //Assign the new and rearranged array data to the array diagram
                     arrayDiagram.data = arrayData;
-                    await updateArrayDiagram(arrayDiagram, transform.duration, transform.stagger);
+                    await updateArrayDiagram(
+                        arrayDiagram,
+                        transform.duration,
+                        transform.stagger
+                    );
 
                     break;
                 }
 
-                case transformType.HIGHLIGHT:
-                {
+                case transformType.HIGHLIGHT: {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
+                    const selection = d3.selectAll(
+                        transform.args.item.map(
+                            (item) =>
+                                arrayDiagram.arrayItems.nodes()[item.index]
+                        )
+                    );
 
                     //Highlight thoses elements
-                    await highlightArrayElement(selection, transform.duration, transform.stagger, color.BLUE, color.GREY);
+                    await highlightArrayElement(
+                        selection,
+                        transform.duration,
+                        transform.stagger,
+                        color.BLUE,
+                        color.GREY
+                    );
 
                     break;
                 }
 
-                case transformType.SELECT:
-                {
+                case transformType.SELECT: {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
-                    
+                    const selection = d3.selectAll(
+                        transform.args.item.map(
+                            (item) =>
+                                arrayDiagram.arrayItems.nodes()[item.index]
+                        )
+                    );
+
                     //Select thoses elements
-                    await highlightArrayElement(selection, transform.duration, transform.stagger, color.BLUE, color.GREEN);
+                    await highlightArrayElement(
+                        selection,
+                        transform.duration,
+                        transform.stagger,
+                        color.BLUE,
+                        color.GREEN
+                    );
 
                     break;
                 }
 
-                case transformType.DESELECT:
-                {
+                case transformType.DESELECT: {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
+                    const selection = d3.selectAll(
+                        transform.args.item.map(
+                            (item) =>
+                                arrayDiagram.arrayItems.nodes()[item.index]
+                        )
+                    );
 
                     //Deselect thoses elements
-                    await highlightArrayElement(selection, transform.duration, transform.stagger, color.GREY, color.GREY);
+                    await highlightArrayElement(
+                        selection,
+                        transform.duration,
+                        transform.stagger,
+                        color.GREY,
+                        color.GREY
+                    );
 
                     break;
                 }
 
-                case transformType.RETURN:
-                {
+                case transformType.RETURN: {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
-                    
+                    const selection = d3.selectAll(
+                        transform.args.item.map(
+                            (item) =>
+                                arrayDiagram.arrayItems.nodes()[item.index]
+                        )
+                    );
+
                     //If returnArray is null, then create one
-                    if(returnArray === null) {
-                        //Create a new Vector2D object to be used as the new position for the new array diagram
-                        const returnPosition = new Vector2D(arrayDiagram.properties.POSITION.x, arrayDiagram.properties.POSITION.y + 2.5*arrayDiagram.properties.ITEM_SIZE);
-    
-                        // Create a new ArrayProp object to be used for translation and for the new array diagram 
-                        const returnArrProp = new ArrayProps("Return Value", returnPosition, arrayDiagram.properties.ITEM_SIZE, arrayDiagram.properties.PADDING, d3.select("#svg-container")); 
-                        
+                    if (returnArray === null) {
+                        //Create a object to be used as the new position for the new array diagram
+                        const returnPosition = {
+                            x: arrayDiagram.properties.POSITION.x,
+                            y:
+                                arrayDiagram.properties.POSITION.y +
+                                2.5 * arrayDiagram.properties.ITEM_SIZE,
+                        };
+
+                        // Create a new ArrayProp object to be used for translation and for the new array diagram
+                        const returnArrProp = new ArrayProp(
+                            "Return Value",
+                            returnPosition,
+                            arrayDiagram.properties.ITEM_SIZE,
+                            arrayDiagram.properties.PADDING,
+                            d3.select("#svg-container")
+                        );
+
                         //Get the data that the returned array will store with unique keys
                         const returnArrData = [];
-                        for(let i = 0; i < transform.args.item.length; i++) {
+                        for (let i = 0; i < transform.args.item.length; i++) {
                             const data = arrayDiagram.data[i];
-                            returnArrData.push({ value: data.value, key: uuidv4() });
+                            returnArrData.push(data.value);
                         }
 
                         //Create a new array that will store returned values
-                        returnArray = new ArrayDiagram(returnArrData, returnArrProp);
+                        returnArray = new ArrayDiagram(
+                            returnArrData,
+                            returnArrProp
+                        );
                     }
                     //If it's not null then add the data corresponding to the returned items in the returnArray with unique keys
                     else {
-                        for(let i = 0; i < transform.args.item.length; i++) {
+                        for (let i = 0; i < transform.args.item.length; i++) {
                             const data = arrayDiagram.data[i];
-                            returnArray.data.push({ value: data.value, key: uuidv4() });
+                            returnArray.data.push(data.value);
                         }
                     }
 
                     //Get the indexes of the items being returned
-                    const index = transform.args.item.map(item => item.index);
+                    const index = transform.args.item.map((item) => item.index);
 
                     //Return items
-                    await returnArrayElement(selection, arrayDiagram, returnArray, index, transform.duration, transform.stagger);
-                    
+                    await returnArrayElement(
+                        selection,
+                        arrayDiagram,
+                        returnArray,
+                        index,
+                        transform.duration,
+                        transform.stagger
+                    );
+
                     break;
                 }
 
-                case transformType.COMBINE:
-                {
+                case transformType.COMBINE: {
                     //Parse input indexes that are to be combined into an array
-                    const combineIndexes = transform.args.item.map(item => (item.index.split("=>")).map(item => parseInt(item)));
-                    
+                    const combineIndexes = transform.args.item.map((item) =>
+                        item.index.split("=>").map((item) => parseInt(item))
+                    );
+
                     //Duration of the transformation
-                    const combineDuration = transform.duration/combineIndexes.length;
-                    
-                    for(let i = 0; i < combineIndexes.length; i++) {
+                    const combineDuration =
+                        transform.duration / combineIndexes.length;
+
+                    for (let i = 0; i < combineIndexes.length; i++) {
                         //Get the selection
-                        const selection = d3.selectAll(combineIndexes[i].map((item) => arrayDiagram.arrayItems.nodes()[item]));
+                        const selection = d3.selectAll(
+                            combineIndexes[i].map(
+                                (item) => arrayDiagram.arrayItems.nodes()[item]
+                            )
+                        );
 
                         //Combine the selection
-                        await  combineArrayElement(selection, combineIndexes[i], arrayDiagram, combineDuration, transform.stagger);
+                        await combineArrayElement(
+                            selection,
+                            combineIndexes[i],
+                            arrayDiagram,
+                            combineDuration,
+                            transform.stagger
+                        );
                     }
 
                     break;
                 }
 
-                case transformType.MORPH:
-                {
+                case transformType.MORPH: {
                     //Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
-                    const selection = d3.selectAll(transform.args.item.map((item) => arrayDiagram.arrayItems.nodes()[item.index]));
+                    const selection = d3.selectAll(
+                        transform.args.item.map(
+                            (item) =>
+                                arrayDiagram.arrayItems.nodes()[item.index]
+                        )
+                    );
 
                     //Get the indexes and values as seperate arrays from transform.args.item
-                    const index = transform.args.item.map(item => item.index);
-                    const value = transform.args.item.map(item => item.value);
+                    const index = transform.args.item.map((item) => item.index);
+                    const value = transform.args.item.map((item) => item.value);
 
                     //Only change values in the arrayDiagram.data array and not keys
-                    for(let i = 0; i < transform.args.item.length; i++) {
+                    for (let i = 0; i < transform.args.item.length; i++) {
                         arrayDiagram.data[index[i]].value = value[i];
                     }
 
                     //Morph the elements to the corresponding values specified in the arguments
-                    await morphArrayElement(selection, value, transform.duration, transform.stagger);
+                    await morphArrayElement(
+                        selection,
+                        value,
+                        transform.duration,
+                        transform.stagger
+                    );
 
                     break;
                 }

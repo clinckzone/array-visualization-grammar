@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import { color } from "../../Auxillary/Color";
 import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
-import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition";
+import { calcArrayItemPos } from "../../Auxillary/ArrayHelper/CalcArrayItemPos";
 
 /**
  * The function adds the elements given in the index. With the leftmost item being added first.
@@ -31,8 +31,8 @@ export async function addArrayElement(enterSelection, arrayDiagram, duration, st
 
     //Arranging the position of array items in the array
     elemEnter
-    .attr("class", `array-item-${arrayDiagram.DIAGRAM_ID}`)
-    .attr("transform", (data, index) => `translate(${arrayItemPosition(index, arrayDiagram.properties).x}, ${arrayItemPosition(index, arrayDiagram.properties).y})`);
+    .attr("class", `array-item-${arrayDiagram.properties.DIAGRAM_ID}`)
+    .attr("transform", (data, index) => `translate(${calcArrayItemPos(index, arrayDiagram.properties).x}, ${calcArrayItemPos(index, arrayDiagram.properties).y})`);
 
 
     //Re-arrange the indexes of the selection. Without rearranging the indexes, their

@@ -4,7 +4,7 @@ import { updateArrayBoundary } from "./UpdateArrayBoundary";
 
 import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
 
-import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition";
+import { calcArrayItemPos } from "../../Auxillary/ArrayHelper/CalcArrayItemPos";
 import { removeArrayElement } from "./RemoveArrayElement";
 
 /**
@@ -18,7 +18,7 @@ export async function updateArrayDiagram(arrayDiagram, duration, stagger) {
     
     //Bind array items to array data
     let updateSelection = arrayDiagram.properties.SVG_CONTAINER
-    .selectAll(`g.array-item-${arrayDiagram.DIAGRAM_ID}`)
+    .selectAll(`g.array-item-${arrayDiagram.properties.DIAGRAM_ID}`)
     .data(arrayDiagram.data, (data) => data.key);
     
     //Enter and exit selections
@@ -34,7 +34,7 @@ export async function updateArrayDiagram(arrayDiagram, duration, stagger) {
     //Move the existing items to their new places
     await updateSelection.transition()
     .duration(duration/6)
-    .attr("transform", (data, index) => `translate(${arrayItemPosition(index, arrayDiagram.properties).x}, ${arrayItemPosition(index, arrayDiagram.properties).y})`)
+    .attr("transform", (data, index) => `translate(${calcArrayItemPos(index, arrayDiagram.properties).x}, ${calcArrayItemPos(index, arrayDiagram.properties).y})`)
     .end();
 
     //Add array items

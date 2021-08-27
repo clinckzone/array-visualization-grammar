@@ -12,7 +12,7 @@ export class AnimationSpec {
         //Global properties
         this.global.stagger = this.global.stagger !== undefined ? this.global.stagger : false;
         this.global.easingFunction = this.global.easingFunction !== undefined ? `d3.${this.global.easingFunction}` : "d3.easeCubic";
-        this.global.duration = this.global.duration !== undefined ? this.global.duration : 1000;
+        this.global.durationEach = this.global.durationEach !== undefined ? this.global.durationEach : 1000;
 
         //An array property containing animation properties for each transformation type 
         this.transform = [];
@@ -30,9 +30,9 @@ export class AnimationSpec {
             const type = rawSpecKey;  
             const stagger = (propExist && rawSpec[rawSpecKey].stagger !== undefined) ? rawSpec[rawSpecKey].stagger : this.global.stagger;
             const easingFunction = (propExist && rawSpec[rawSpecKey].easingFunction !== undefined) ? `d3.${rawSpec[rawSpecKey].easingFunction}` : this.global.easingFunction;
-            const duration = (propExist && rawSpec[rawSpecKey].duration !== undefined) ? rawSpec[rawSpecKey].duration : this.global.duration;
+            const durationEach = (propExist && rawSpec[rawSpecKey].durationEach !== undefined) ? rawSpec[rawSpecKey].durationEach : this.global.durationEach;
         
-            this.transform.push({ type, stagger, duration, easingFunction });
+            this.transform.push({ type, stagger, durationEach, easingFunction });
         });
     }
 }

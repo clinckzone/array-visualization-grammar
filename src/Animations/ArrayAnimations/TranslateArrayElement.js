@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
-import { arrayItemPosition } from "../../Auxillary/ArrayHelper/ArrayItemPosition";
+import { calcArrayItemPos } from "../../Auxillary/ArrayHelper/CalcArrayItemPos";
 
 /**
  * The functions translates the given selection from its original array 
@@ -37,8 +37,8 @@ export async function translateArrayElement(selection, fromIndex, toIndex, start
 
             //Start and end point of translation
             const itemPathEndPoints = [
-                [arrayItemPosition(fromIndex[index], startArray.properties).x, arrayItemPosition(fromIndex[index], startArray.properties).y],
-                [arrayItemPosition(toIndex[index], endArray.properties).x, arrayItemPosition(toIndex[index], endArray.properties).y]
+                [calcArrayItemPos(fromIndex[index], startArray.properties).x, calcArrayItemPos(fromIndex[index], startArray.properties).y],
+                [calcArrayItemPos(toIndex[index], endArray.properties).x, calcArrayItemPos(toIndex[index], endArray.properties).y]
             ];
 
             //Data for the items' path

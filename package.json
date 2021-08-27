@@ -1,29 +1,29 @@
 {
-  "name": "code-repository",
-  "version": "1.0.0",
-  "description": "Code repository for my internship project at Creativity Lab, UCSD",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --progress"
-  },
-  "author": "Divyanshu Tiwari",
-  "license": "ISC",
-  "dependencies": {
-    "css-loader": "^6.2.0",
-    "d3": "^7.0.0",
-    "express": "^4.17.1",
-    "file-loader": "^6.2.0",
-    "iroh": "^0.3.0",
-    "lodash": "^4.17.21",
-    "monaco-editor": "^0.26.1",
-    "monaco-editor-webpack-plugin": "^4.1.1",
-    "path": "^0.12.7",
-    "style-loader": "^3.2.1",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "webpack": "^5.44.0",
-    "webpack-cli": "^4.7.2"
-  }
+    "name": "code-repository",
+    "version": "1.0.0",
+    "description": "Code repository for my internship project at Creativity Lab, UCSD",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack --progress"
+    },
+    "author": "Divyanshu Tiwari",
+    "license": "ISC",
+    "dependencies": {
+        "css-loader": "^6.2.0",
+        "d3": "^7.0.0",
+        "express": "^4.17.1",
+        "file-loader": "^6.2.0",
+        "iroh": "^0.3.0",
+        "lodash": "^4.17.21",
+        "monaco-editor": "^0.26.1",
+        "monaco-editor-webpack-plugin": "^4.1.1",
+        "path": "^0.12.7",
+        "style-loader": "^3.2.1",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "webpack": "^5.44.0",
+        "webpack-cli": "^4.7.2"
+    }
 }
