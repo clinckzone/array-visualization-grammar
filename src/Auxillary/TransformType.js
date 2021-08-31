@@ -11,5 +11,6 @@ export const transformType = {
 	DESELECT: 'deselect',
 	RETURN: 'return',
 	COMBINE: 'combine',
+	EXCHANGE: 'exchange',
 	MORPH: 'morph',
 };

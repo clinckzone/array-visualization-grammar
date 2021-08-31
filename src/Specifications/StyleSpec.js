@@ -340,5 +340,23 @@ export class StyleSpec {
 			this.transform.morph.easingFunction !== undefined
 				? `d3.${this.transform.morph.easingFunction}`
 				: this.transform.global.easingFunction;
+
+		//Exchange
+		this.transform.exchange =
+			this.transform.exchange !== undefined
+				? this.transform.exchange
+				: {};
+		this.transform.exchange.stagger =
+			this.transform.exchange.stagger !== undefined
+				? this.transform.exchange.stagger
+				: this.transform.global.stagger;
+		this.transform.exchange.durationEach =
+			this.transform.exchange.durationEach !== undefined
+				? this.transform.exchange.durationEach
+				: this.transform.global.durationEach;
+		this.transform.exchange.easingFunction =
+			this.transform.exchange.easingFunction !== undefined
+				? `d3.${this.transform.exchange.easingFunction}`
+				: this.transform.global.easingFunction;
 	}
 }

@@ -324,6 +324,12 @@ export class TransformSpec {
 					break;
 				}
 
+				case transformType.EXCHANGE: {
+					const index = transform.args.item.map((item) => item.index);
+
+					break;
+				}
+
 				case transformType.MORPH: {
 					//Map the indexes in the transform.args.item array to nodes in arrayItems of the arrayDiagram
 					const selection = d3.selectAll(

@@ -12,7 +12,15 @@ import { calcArrayItemPos } from '../../Auxillary/ArrayHelper/CalcArrayItemPos';
  * @param {number[]} toIndex Indexes in the endArray to which the array items will be translated to
  * @param {number} duration Total duration of the array in milliseconds.
  */
-export async function translateArrayElement(copiedNodeSelection, startArray, endArray, fromIndex, toIndex, duration, stagger) {
+export async function translateArrayElement(
+	copiedNodeSelection,
+	startArray,
+	endArray,
+	fromIndex,
+	toIndex,
+	duration,
+	stagger
+) {
 	//Check if the translation needs to be staggered
 	let delay = 0;
 
@@ -31,10 +39,28 @@ export async function translateArrayElement(copiedNodeSelection, startArray, end
 			//A d3 line generator function
 			const lineGenerator = d3.line().curve(d3.curveNatural);
 
-			//Start and end point of translation
+			//Start point of translation
+			const x1 = calcArrayItemPos(
+				fromIndex[index],
+				startArray.properties
+			).x;
+			const y1 = calcArrayItemPos(
+				fromIndex[index],
+				startArray.properties
+			).y;
+
+			//End point of translation
+			const x2 = calcArrayItemPos(toIndex[index], endArray.properties).x;
+			const y2 = calcArrayItemPos(toIndex[index], endArray.properties).y;
+
+			//Midpoint of translation
+			const xMid = calculateCurveMidPoint(x1, y1, x2, y2).x;
+			const yMid = calculateCurveMidPoint(x1, y1, x2, y2).y;
+
 			const itemPathEndPoints = [
-				[calcArrayItemPos(fromIndex[index], startArray.properties).x, calcArrayItemPos(fromIndex[index], startArray.properties).y],
-				[calcArrayItemPos(toIndex[index], endArray.properties).x, calcArrayItemPos(toIndex[index], endArray.properties).y],
+				[x1, y1],
+				[xMid, yMid],
+				[x2, y2],
 			];
 
 			//Data for the items' path
@@ -79,8 +105,26 @@ export async function translateArrayElement(copiedNodeSelection, startArray, end
 			};
 
 			return function (t) {
-				return d3.select(this).attr('transform', interpolateSVGgroup(t));
+				return d3
+					.select(this)
+					.attr('transform', interpolateSVGgroup(t));
 			};
 		})
 		.end();
+}
+
+/**
+ * This function calculates a point P that lies at a perpendicular distance of d/4 from the line connecting the
+ * two points (x1, y1) and (x2, y2), where 'd' is the distance between the two points. P is located such that its
+ * projection M on the line connecting the two points is at its middle.
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ */
+function calculateCurveMidPoint(x1, y1, x2, y2) {
+	return {
+		x: (x1 + x2) / 2 + (y2 - y1) / 4,
+		y: (y1 + y2) / 2 - (x2 - x1) / 4,
+	};
 }

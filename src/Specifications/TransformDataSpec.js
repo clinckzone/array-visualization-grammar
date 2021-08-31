@@ -44,6 +44,8 @@ export class TransformDataSpec {
 		this.duration =
 			rawData.duration !== undefined
 				? rawData.duration
+				: this.stagger
+				? transformStyleSpec.durationEach
 				: this.args.item.length * transformStyleSpec.durationEach;
 
 		//Specify the easing function
