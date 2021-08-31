@@ -11,9 +11,11 @@ export class ArrayDiagram {
 	 */
 	constructor(properties) {
 		this.properties = properties;
-		this.arrayLabel = this.initializeArrayLabel();
-		this.arrayBoundary = this.initializeArrayBoundary();
-		this.arrayItems = d3.select(`array-item-${this.properties.DIAGRAM_ID}`);
+		this.label = this.initializeArrayLabel();
+		this.boundary = this.initializeArrayBoundary();
+		this._items = d3.selectAll(
+			`g.array-item-${this.properties.DIAGRAM_ID}`
+		);
 	}
 
 	/**
@@ -41,6 +43,16 @@ export class ArrayDiagram {
 	}
 
 	/**
+	 * Returns a d3 selection of items that are in the array diagram
+	 */
+	get items() {
+		this._items = this.properties.SVG_CONTAINER.selectAll(
+			`g.array-item-${this.properties.DIAGRAM_ID}`
+		);
+		return this._items;
+	}
+
+	/**
 	 * Create an svg text as the label for the diagram
 	 * @returns {d3.Selection}
 	 */
@@ -63,30 +75,18 @@ export class ArrayDiagram {
 	initializeArrayBoundary() {
 		const boundary = this.properties.SVG_CONTAINER.append('rect')
 			.attr('class', `array-boundary-${this.properties.DIAGRAM_ID}`)
-			.attr('height', this.properties.ITEM_SIZE + 2 * this.properties.PADDING)
+			.attr(
+				'height',
+				this.properties.ITEM_SIZE + 2 * this.properties.PADDING
+			)
 			.attr('x', `${this.properties.POSITION.x}`)
 			.attr('y', `${this.properties.POSITION.y}`)
 			.attr('rx', 0.1 * this.properties.ITEM_SIZE)
 			.attr('ry', 0.1 * this.properties.ITEM_SIZE)
 			.style('fill', '#fafafa')
 			.style('stroke', 'rgb(0, 0, 0, 0.05)')
-			.style('stroke-width', '0.8')
-			.style('transform', 'translate()')
-			.style('opacity', 0.0);
+			.style('stroke-width', '1px');
 
 		return boundary;
-	}
-
-	/**
-	 * Binds a key with each array item in the diagram
-	 * so that it can be uniquely identified by d3.
-	 * @param {any} value
-	 * @returns {{key:string; value: any}}
-	 */
-	bindToKey(value) {
-		return {
-			value: value,
-			key: uuidv4(),
-		};
 	}
 }

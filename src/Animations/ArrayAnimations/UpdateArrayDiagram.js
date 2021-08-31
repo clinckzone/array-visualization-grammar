@@ -1,54 +1,64 @@
 //@ts-check
-import { addArrayElement } from "./AddArrayElement";
-import { updateArrayBoundary } from "./UpdateArrayBoundary";
-
-import { ArrayDiagram } from "../../Diagrams/ArrayDiagram";
-
-import { calcArrayItemPos } from "../../Auxillary/ArrayHelper/CalcArrayItemPos";
-import { removeArrayElement } from "./RemoveArrayElement";
+import { ArrayDiagram } from '../../Diagrams/ArrayDiagram';
+import { addArrayElement } from './AddArrayElement';
+import { removeArrayElement } from './RemoveArrayElement';
+import { updateArrayBoundary } from './UpdateArrayBoundary';
+import { calcArrayItemPos } from '../../Auxillary/ArrayHelper/CalcArrayItemPos';
 
 /**
  * A function that updates the array diagram's boundary width and the items that are in the array diagram
  * @param {ArrayDiagram} arrayDiagram Array diagram that needs to be updated
  * @param {number} duration Total time for updating the array
  * @param {boolean} stagger Should there be delay between successive highlights?
- * @returns {Promise<d3.Selection>} D3 selction of <g> elements in the array diagram 
+ * @returns {Promise<d3.Selection>} D3 selction of <g> elements in the array diagram
  */
 export async function updateArrayDiagram(arrayDiagram, duration, stagger) {
-    
-    //Bind array items to array data
-    let updateSelection = arrayDiagram.properties.SVG_CONTAINER
-    .selectAll(`g.array-item-${arrayDiagram.properties.DIAGRAM_ID}`)
-    .data(arrayDiagram.data, (data) => data.key);
-    
-    //Enter and exit selections
-    let enterSelection = updateSelection.enter();
-    let exitSelection = updateSelection.exit();
+	//Bind array items to array data
+	let updateSelection = arrayDiagram.items.data(
+		arrayDiagram.data,
+		(data) => data.key
+	);
 
-    //Remove array items
-    exitSelection = await removeArrayElement(exitSelection, duration/3, stagger);
+	//Enter and exit selections
+	let enterSelection = updateSelection.enter();
+	let exitSelection = updateSelection.exit();
 
-    //Update the array's boundary width
-    await updateArrayBoundary(arrayDiagram, duration/6);
+	//Remove array items
+	exitSelection = await removeArrayElement(
+		exitSelection,
+		duration / 3,
+		stagger
+	);
 
-    //Move the existing items to their new places
-    await updateSelection.transition()
-    .duration(duration/6)
-    .attr("transform", (data, index) => `translate(${calcArrayItemPos(index, arrayDiagram.properties).x}, ${calcArrayItemPos(index, arrayDiagram.properties).y})`)
-    .end();
+	//Update the array's boundary width
+	await updateArrayBoundary(arrayDiagram, duration / 6);
 
-    //Add array items
-    enterSelection = await addArrayElement(enterSelection, arrayDiagram, duration/3, stagger);
-    
-    //Modify the indexes of each array item 
-    updateSelection
-    .select(".array-item-index")
-    .text((data, index) => index);
+	//Move the existing items to their new places
+	await updateSelection
+		.transition()
+		.duration(duration / 6)
+		.attr(
+			'transform',
+			(data, index) =>
+				`translate(${
+					calcArrayItemPos(index, arrayDiagram.properties).x
+				}, ${calcArrayItemPos(index, arrayDiagram.properties).y})`
+		)
+		.end();
 
-    //Merge the update selection with the enter selection
-    //Assign it as a reference to the array items of the array diagram 
-    arrayDiagram.arrayItems = updateSelection.merge(enterSelection);
+	//Add array items
+	enterSelection = await addArrayElement(
+		enterSelection,
+		arrayDiagram,
+		duration / 3,
+		stagger
+	);
 
-    return updateSelection;
+	//Modify the indexes of each array item
+	updateSelection.select('.array-item-index').text((data, index) => index);
 
+	//Merge the update selection with the enter selection
+	updateSelection = updateSelection.merge(enterSelection);
+
+	return updateSelection;
 }

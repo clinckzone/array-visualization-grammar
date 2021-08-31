@@ -2,10 +2,10 @@
 export class TransformDataSpec {
 	/**
 	 * TransformDataSpec stores a single transformation data inside itself
-	 * @param {{type: string; value: any[], index: any[]; stagger: boolean; duration: number; easingFunction: String}} rawData
-	 * @param {{type: string; stagger: boolean; durationEach: number; easingFunction: String}} transformAnimSpec
+	 * @param {{type: string; value: any[], index: any[]; stroke: String; strokeWidth: String; fill: String; stagger: boolean; duration: number; easingFunction: String}} rawData
+	 * @param {{stroke: String; strokeWidth: String; fill: String; stagger: boolean; durationEach: number; easingFunction: String;}} transformStyleSpec
 	 */
-	constructor(rawData, transformAnimSpec) {
+	constructor(rawData, transformStyleSpec) {
 		//Stored Data types
 		this.dataType = {
 			ARRAY: 'array',
@@ -18,14 +18,39 @@ export class TransformDataSpec {
 		//Get the transformation arguments
 		this.initializeArgs(rawData);
 
+		//Stroke color
+		this.stroke =
+			rawData.stroke !== undefined
+				? rawData.stroke
+				: transformStyleSpec.stroke;
+
+		//Stroke width
+		this.strokeWidth =
+			rawData.strokeWidth !== undefined
+				? rawData.strokeWidth
+				: transformStyleSpec.strokeWidth;
+
+		//Fill color
+		this.fill =
+			rawData.fill !== undefined ? rawData.fill : transformStyleSpec.fill;
+
 		//Should the transformation be staggered?
-		this.stagger = rawData.stagger !== undefined ? rawData.stagger : transformAnimSpec.stagger;
+		this.stagger =
+			rawData.stagger !== undefined
+				? rawData.stagger
+				: transformStyleSpec.stagger;
 
 		//Specifiy duration property
-		this.duration = rawData.duration !== undefined ? rawData.duration : this.args.item.length * transformAnimSpec.durationEach;
+		this.duration =
+			rawData.duration !== undefined
+				? rawData.duration
+				: this.args.item.length * transformStyleSpec.durationEach;
 
 		//Specify the easing function
-		this.easingFunction = rawData.easingFunction !== undefined ? rawData.easingFunction : transformAnimSpec.easingFunction;
+		this.easingFunction =
+			rawData.easingFunction !== undefined
+				? rawData.easingFunction
+				: transformStyleSpec.easingFunction;
 	}
 
 	//Wraps the transformation arguments in rawData into an object
@@ -45,7 +70,10 @@ export class TransformDataSpec {
 			}
 
 			//Else if both value and index are specified as primitives
-			else if (!Array.isArray(rawData.index) && !Array.isArray(rawData.value)) {
+			else if (
+				!Array.isArray(rawData.index) &&
+				!Array.isArray(rawData.value)
+			) {
 				this.args = {
 					type: this.dataType.PRIMITIVE,
 					item: [

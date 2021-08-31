@@ -12,16 +12,31 @@ import { updateArrayDiagram } from './UpdateArrayDiagram';
  * @param {number} duration The total duration of the transformation
  * @param {boolean} stagger Do you want the transformation animation staggered?
  */
-export async function returnArrayElement(arrayDiagram, returnArray, index, duration, stagger) {
+export async function returnArrayElement(
+	arrayDiagram,
+	returnArray,
+	index,
+	duration,
+	stagger
+) {
 	//Map the indexes to nodes in arrayItems of the arrayDiagram
-	let selection = d3.selectAll(index.map((item) => arrayDiagram.arrayItems.nodes()[item]));
+	let selection = d3.selectAll(
+		index.map((item) => arrayDiagram.items.nodes()[item])
+	);
 
 	//Create a copy of the selection
 	const copiedNodes = selection.nodes().map((item) => item.cloneNode(true));
-	selection = d3.selectAll(copiedNodes.map((item) => document.getElementById('svg-container').appendChild(item)));
+	selection = d3.selectAll(
+		copiedNodes.map((item) =>
+			document.getElementById('svg-container').appendChild(item)
+		)
+	);
 
 	//Remove the old arrayDiagram class identifier from the item
-	selection.classed(`array-item-${arrayDiagram.properties.DIAGRAM_ID}`, false);
+	selection.classed(
+		`array-item-${arrayDiagram.properties.DIAGRAM_ID}`,
+		false
+	);
 
 	//Get the length of the selection
 	const selLength = index.length;
@@ -30,10 +45,20 @@ export async function returnArrayElement(arrayDiagram, returnArray, index, durat
 	const fromIndex = index;
 
 	//Indexes in the returnArray to which the array items will be translated to
-	const toIndex = returnArray.data.map((item, index, array) => array.length - selLength + index);
+	const toIndex = returnArray.data.map(
+		(item, index, array) => array.length - selLength + index
+	);
 
 	//Translate the copied selection from their old position to the new position
-	await translateArrayElement(selection, arrayDiagram, returnArray, fromIndex, toIndex, (3 * duration) / 4, stagger);
+	await translateArrayElement(
+		selection,
+		arrayDiagram,
+		returnArray,
+		fromIndex,
+		toIndex,
+		(3 * duration) / 4,
+		stagger
+	);
 
 	//Make the copied selection recognizable by the returned
 	//array by changing its class and the bound datum

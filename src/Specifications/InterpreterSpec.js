@@ -2,7 +2,6 @@
 import * as d3 from 'd3';
 import { DataSpec } from './DataSpec';
 import { StyleSpec } from './StyleSpec';
-import { AnimationSpec } from './AnimationSpec';
 import { TransformSpec } from './TransformSpec';
 import { ArrayDiagram } from '../Diagrams/ArrayDiagram';
 import { ArrayProp } from '../Auxillary/ArrayHelper/ArrayProp';
@@ -17,17 +16,16 @@ export class InterpreterSpec {
 		//Gets the data structure that we are animating
 		this.data = new DataSpec(rawSpec.data);
 
-		//Get the animation settings
-		rawSpec.animation = rawSpec.animation !== undefined ? rawSpec.animation : {};
-		this.animation = new AnimationSpec(rawSpec.animation);
-
 		//Get the style settings
 		rawSpec.style = rawSpec.style !== undefined ? rawSpec.style : {};
 		this.style = new StyleSpec(rawSpec.style);
 
 		//Get the transformations on the data structure
-		rawSpec.transform = rawSpec.transform !== undefined ? rawSpec.transform : [];
-		this.transform = rawSpec.transform.map((item) => new TransformSpec(item, this.animation, this.style));
+		rawSpec.transform =
+			rawSpec.transform !== undefined ? rawSpec.transform : [];
+		this.transform = rawSpec.transform.map(
+			(item) => new TransformSpec(item, this.style)
+		);
 	}
 
 	async interpret() {
@@ -47,7 +45,9 @@ export class InterpreterSpec {
 
 		//Applies the transformation on the array in order
 		for (let i = 0; i < this.transform.length; i++) {
-			const returnArray = await this.transform[i].applyTransformation(arrayDiagram);
+			const returnArray = await this.transform[i].applyTransformation(
+				arrayDiagram
+			);
 			try {
 				arrayDiagram = returnArray;
 			} catch {
