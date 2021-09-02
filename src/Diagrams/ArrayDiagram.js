@@ -46,9 +46,22 @@ export class ArrayDiagram {
 	 * Returns a d3 selection of items that are in the array diagram
 	 */
 	get items() {
-		this._items = this.properties.SVG_CONTAINER.selectAll(
+		const orderedItems = this.data.map((item) => {
+			return d3
+				.selectAll(`g.array-item-${this.properties.DIAGRAM_ID}`)
+				.filter((data) => {
+					return data.value === item.value;
+				})
+				.node();
+		});
+
+		const selection = this.properties.SVG_CONTAINER.selectAll(
 			`g.array-item-${this.properties.DIAGRAM_ID}`
 		);
+
+		this._items = selection;
+		this._items._groups[0] = orderedItems;
+
 		return this._items;
 	}
 

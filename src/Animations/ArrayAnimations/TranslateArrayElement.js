@@ -5,7 +5,7 @@ import { calcArrayItemPos } from '../../Auxillary/ArrayHelper/CalcArrayItemPos';
 /**
  * The functions translates the given selection from its original array
  * diagram to the new location where a new array diagram will be created.
- * @param {d3.Selection} copiedNodeSelection D3 selection that references to the copied nodes
+ * @param {d3.Selection} selection D3 selection that references to the copied nodes
  * @param {ArrayDiagram} startArray The array diagram from where the item will start
  * @param {ArrayDiagram} endArray The array diagram where the item will go to
  * @param {number[]} fromIndex Indexes of the array items in the startArray that are to be translated from their position
@@ -13,7 +13,7 @@ import { calcArrayItemPos } from '../../Auxillary/ArrayHelper/CalcArrayItemPos';
  * @param {number} duration Total duration of the array in milliseconds.
  */
 export async function translateArrayElement(
-	copiedNodeSelection,
+	selection,
 	startArray,
 	endArray,
 	fromIndex,
@@ -21,17 +21,20 @@ export async function translateArrayElement(
 	duration,
 	stagger
 ) {
+	//Factor
+	const factor = 4;
+
 	//Check if the translation needs to be staggered
 	let delay = 0;
 
 	//If that is the case, calculate duration and delay for each item
 	if (stagger === true) {
-		duration = duration / copiedNodeSelection.size();
+		duration = duration / selection.size();
 		delay = duration;
 	}
 
 	//translate each item
-	await copiedNodeSelection
+	await selection
 		.transition()
 		.duration(duration)
 		.delay((data, index) => index * delay)
@@ -54,8 +57,8 @@ export async function translateArrayElement(
 			const y2 = calcArrayItemPos(toIndex[index], endArray.properties).y;
 
 			//Midpoint of translation
-			const xMid = calculateCurveMidPoint(x1, y1, x2, y2).x;
-			const yMid = calculateCurveMidPoint(x1, y1, x2, y2).y;
+			const xMid = calculateCurveMidPoint(x1, y1, x2, y2, factor).x;
+			const yMid = calculateCurveMidPoint(x1, y1, x2, y2, factor).y;
 
 			const itemPathEndPoints = [
 				[x1, y1],
@@ -121,10 +124,11 @@ export async function translateArrayElement(
  * @param {number} y1
  * @param {number} x2
  * @param {number} y2
+ * @param {number} factor Determines the perpendicular distance of P from the line joining the two points
  */
-function calculateCurveMidPoint(x1, y1, x2, y2) {
+function calculateCurveMidPoint(x1, y1, x2, y2, factor) {
 	return {
-		x: (x1 + x2) / 2 + (y2 - y1) / 4,
-		y: (y1 + y2) / 2 - (x2 - x1) / 4,
+		x: (x1 + x2) / 2 + (y2 - y1) / factor,
+		y: (y1 + y2) / 2 - (x2 - x1) / factor,
 	};
 }

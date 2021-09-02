@@ -1,7 +1,7 @@
 "use strict";
 (self["webpackChunkcode_repository"] = self["webpackChunkcode_repository"] || []).push([[4],{
 
-/***/ 1295:
+/***/ 1297:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -11,8 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "applyEdit": () => (/* binding */ applyEdit),
 /* harmony export */   "isWS": () => (/* binding */ isWS)
 /* harmony export */ });
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1293);
-/* harmony import */ var _parser_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1296);
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1295);
+/* harmony import */ var _parser_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1298);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -203,7 +203,7 @@ function isWS(text, offset) {
 
 /***/ }),
 
-/***/ 1293:
+/***/ 1295:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -211,7 +211,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "format": () => (/* binding */ format),
 /* harmony export */   "isEOL": () => (/* binding */ isEOL)
 /* harmony export */ });
-/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
+/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1296);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -421,7 +421,7 @@ function isEOL(text, offset) {
 
 /***/ }),
 
-/***/ 1296:
+/***/ 1298:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -438,7 +438,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "stripComments": () => (/* binding */ stripComments),
 /* harmony export */   "getNodeType": () => (/* binding */ getNodeType)
 /* harmony export */ });
-/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
+/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1296);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1064,7 +1064,7 @@ function getNodeType(value) {
 
 /***/ }),
 
-/***/ 1294:
+/***/ 1296:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1438,7 +1438,7 @@ function isDigit(ch) {
 
 /***/ }),
 
-/***/ 1292:
+/***/ 1294:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1458,10 +1458,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "modify": () => (/* binding */ modify),
 /* harmony export */   "applyEdits": () => (/* binding */ applyEdits)
 /* harmony export */ });
-/* harmony import */ var _impl_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1293);
-/* harmony import */ var _impl_edit_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1295);
-/* harmony import */ var _impl_scanner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1294);
-/* harmony import */ var _impl_parser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1296);
+/* harmony import */ var _impl_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1295);
+/* harmony import */ var _impl_edit_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1297);
+/* harmony import */ var _impl_scanner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1296);
+/* harmony import */ var _impl_parser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1298);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1582,7 +1582,7 @@ function applyEdits(text, edits) {
 
 /***/ }),
 
-/***/ 1289:
+/***/ 1291:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1615,18 +1615,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TextEdit": () => (/* reexport safe */ _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__.TextEdit),
 /* harmony export */   "getLanguageService": () => (/* binding */ getLanguageService)
 /* harmony export */ });
-/* harmony import */ var _services_jsonCompletion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1290);
-/* harmony import */ var _services_jsonHover_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1304);
-/* harmony import */ var _services_jsonValidation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1305);
-/* harmony import */ var _services_jsonDocumentSymbols_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1308);
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1291);
-/* harmony import */ var _services_configuration_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1310);
-/* harmony import */ var _services_jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1306);
-/* harmony import */ var _services_jsonFolding_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1311);
-/* harmony import */ var _services_jsonSelectionRanges_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1312);
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1292);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1298);
-/* harmony import */ var _services_jsonLinks_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(1313);
+/* harmony import */ var _services_jsonCompletion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1292);
+/* harmony import */ var _services_jsonHover_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1306);
+/* harmony import */ var _services_jsonValidation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1307);
+/* harmony import */ var _services_jsonDocumentSymbols_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1310);
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1293);
+/* harmony import */ var _services_configuration_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1312);
+/* harmony import */ var _services_jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1308);
+/* harmony import */ var _services_jsonFolding_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1313);
+/* harmony import */ var _services_jsonSelectionRanges_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1314);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1294);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1300);
+/* harmony import */ var _services_jsonLinks_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(1315);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1696,7 +1696,7 @@ function getLanguageService(params) {
 
 /***/ }),
 
-/***/ 1298:
+/***/ 1300:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1728,8 +1728,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ErrorCode": () => (/* binding */ ErrorCode),
 /* harmony export */   "ClientCapabilities": () => (/* binding */ ClientCapabilities)
 /* harmony export */ });
-/* harmony import */ var _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1299);
-/* harmony import */ var _vscode_languageserver_textdocument_lib_esm_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1300);
+/* harmony import */ var _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1301);
+/* harmony import */ var _vscode_languageserver_textdocument_lib_esm_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1302);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1779,7 +1779,7 @@ var ClientCapabilities;
 
 /***/ }),
 
-/***/ 1291:
+/***/ 1293:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1802,10 +1802,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "JSONDocument": () => (/* binding */ JSONDocument),
 /* harmony export */   "parse": () => (/* binding */ parse)
 /* harmony export */ });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1292);
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1297);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1298);
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1301);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1299);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1300);
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1303);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -3019,14 +3019,14 @@ function parse(textDocument, config) {
 
 /***/ }),
 
-/***/ 1310:
+/***/ 1312:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "schemaContributions": () => (/* binding */ schemaContributions)
 /* harmony export */ });
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1301);
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1303);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -3561,20 +3561,20 @@ for (var schemaName in schemaContributions.schemas) {
 
 /***/ }),
 
-/***/ 1290:
+/***/ 1292:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "JSONCompletion": () => (/* binding */ JSONCompletion)
 /* harmony export */ });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1291);
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1292);
-/* harmony import */ var _utils_json_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1302);
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1303);
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1297);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1298);
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1301);
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1293);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1294);
+/* harmony import */ var _utils_json_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1304);
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1305);
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1299);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1300);
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1303);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4513,17 +4513,17 @@ var JSONCompletion = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 1308:
+/***/ 1310:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "JSONDocumentSymbols": () => (/* binding */ JSONDocumentSymbols)
 /* harmony export */ });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1291);
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1303);
-/* harmony import */ var _utils_colors_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1309);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1298);
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1293);
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1305);
+/* harmony import */ var _utils_colors_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1311);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1300);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4806,15 +4806,15 @@ function getRange(document, node) {
 
 /***/ }),
 
-/***/ 1311:
+/***/ 1313:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getFoldingRanges": () => (/* binding */ getFoldingRanges)
 /* harmony export */ });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1292);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1298);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1300);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4940,15 +4940,15 @@ function getFoldingRanges(document, context) {
 
 /***/ }),
 
-/***/ 1304:
+/***/ 1306:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "JSONHover": () => (/* binding */ JSONHover)
 /* harmony export */ });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1291);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1298);
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1293);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1300);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5065,14 +5065,14 @@ function toMarkdownCodeBlock(content) {
 
 /***/ }),
 
-/***/ 1313:
+/***/ 1315:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "findLinks": () => (/* binding */ findLinks)
 /* harmony export */ });
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1298);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1300);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5150,7 +5150,7 @@ function unescape(str) {
 
 /***/ }),
 
-/***/ 1306:
+/***/ 1308:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -5159,11 +5159,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ResolvedSchema": () => (/* binding */ ResolvedSchema),
 /* harmony export */   "JSONSchemaService": () => (/* binding */ JSONSchemaService)
 /* harmony export */ });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1292);
-/* harmony import */ var _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1307);
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1303);
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1291);
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1301);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
+/* harmony import */ var _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1309);
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1305);
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1293);
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1303);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5692,15 +5692,15 @@ function toDisplayString(url) {
 
 /***/ }),
 
-/***/ 1312:
+/***/ 1314:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getSelectionRanges": () => (/* binding */ getSelectionRanges)
 /* harmony export */ });
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1298);
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1292);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1300);
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1294);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5766,17 +5766,17 @@ function getSelectionRanges(document, positions, doc) {
 
 /***/ }),
 
-/***/ 1305:
+/***/ 1307:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "JSONValidation": () => (/* binding */ JSONValidation)
 /* harmony export */ });
-/* harmony import */ var _jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1306);
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1298);
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1301);
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1297);
+/* harmony import */ var _jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1308);
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1300);
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1303);
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1299);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5927,7 +5927,7 @@ function toDiagnosticSeverity(severityLevel) {
 
 /***/ }),
 
-/***/ 1309:
+/***/ 1311:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6009,7 +6009,7 @@ function colorFrom256RGB(red, green, blue, alpha) {
 
 /***/ }),
 
-/***/ 1302:
+/***/ 1304:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6062,7 +6062,7 @@ function stringifyObject(obj, indent, stringifyLiteral) {
 
 /***/ }),
 
-/***/ 1297:
+/***/ 1299:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6142,7 +6142,7 @@ function isString(val) {
 
 /***/ }),
 
-/***/ 1303:
+/***/ 1305:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6200,7 +6200,7 @@ function repeat(value, count) {
 
 /***/ }),
 
-/***/ 1300:
+/***/ 1302:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6480,7 +6480,7 @@ function getWellformedEdit(textEdit) {
 
 /***/ }),
 
-/***/ 1299:
+/***/ 1301:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -8457,7 +8457,7 @@ var Is;
 
 /***/ }),
 
-/***/ 1307:
+/***/ 1309:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -8470,7 +8470,7 @@ var LIB;LIB=(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof 
 
 /***/ }),
 
-/***/ 1301:
+/***/ 1303:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -8512,16 +8512,16 @@ function config(opt) {
 
 /***/ }),
 
-/***/ 1286:
+/***/ 1288:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "setupMode": () => (/* binding */ setupMode)
 /* harmony export */ });
-/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1287);
-/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1288);
-/* harmony import */ var _tokenization_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1314);
+/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1289);
+/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1290);
+/* harmony import */ var _tokenization_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1316);
 /* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(686);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8617,7 +8617,7 @@ var richEditConfiguration = {
 
 /***/ }),
 
-/***/ 1288:
+/***/ 1290:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -8633,7 +8633,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SelectionRangeAdapter": () => (/* binding */ SelectionRangeAdapter)
 /* harmony export */ });
 /* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(686);
-/* harmony import */ var _deps_vscode_json_languageservice_jsonLanguageService_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1289);
+/* harmony import */ var _deps_vscode_json_languageservice_jsonLanguageService_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1291);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9226,7 +9226,7 @@ var SelectionRangeAdapter = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 1314:
+/***/ 1316:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -9244,7 +9244,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TOKEN_COMMENT_BLOCK": () => (/* binding */ TOKEN_COMMENT_BLOCK),
 /* harmony export */   "TOKEN_COMMENT_LINE": () => (/* binding */ TOKEN_COMMENT_LINE)
 /* harmony export */ });
-/* harmony import */ var _deps_jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1292);
+/* harmony import */ var _deps_jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1294);
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9446,7 +9446,7 @@ function tokenize(comments, line, state, offsetDelta, stopAtOffset) {
 
 /***/ }),
 
-/***/ 1287:
+/***/ 1289:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);

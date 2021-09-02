@@ -10,10 +10,11 @@ import { ArrayProp } from '../Auxillary/ArrayHelper/ArrayProp';
 
 import { ArrayDiagram } from '../Diagrams/ArrayDiagram';
 import { PrimitiveDiagram } from '../Diagrams/PrimitiveDiagram';
-import { morphArrayElement } from '../Animations/ArrayAnimations/MorphArrayElements';
+import { morphArrayElement } from '../Animations/ArrayAnimations/MorphArrayElement';
 import { updateArrayDiagram } from '../Animations/ArrayAnimations/UpdateArrayDiagram';
 import { returnArrayElement } from '../Animations/ArrayAnimations/ReturnArrayElement';
 import { highlightArrayElement } from '../Animations/ArrayAnimations/HighlightArrayElement';
+import { exchangeArrayElement } from '../Animations/ArrayAnimations/ExchangeArrayElement';
 
 export class TransformSpec {
 	/**
@@ -326,8 +327,21 @@ export class TransformSpec {
 
 				case transformType.EXCHANGE: {
 					const index = transform.args.item.map((item) => item.index);
-
+					if (transform.stagger) {
+						for (let i = 0; i < index.length; i++) {
+							const indexesToExchange = index[i];
+							await exchangeArrayElement(
+								indexesToExchange,
+								arrayDiagram,
+								1000,
+								transform.stagger
+							);
+						}
+					}
 					break;
+				}
+
+				case transformType.COMBINE: {
 				}
 
 				case transformType.MORPH: {
