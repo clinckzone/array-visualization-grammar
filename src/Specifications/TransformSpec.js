@@ -15,6 +15,7 @@ import { updateArrayDiagram } from '../Animations/ArrayAnimations/UpdateArrayDia
 import { returnArrayElement } from '../Animations/ArrayAnimations/ReturnArrayElement';
 import { highlightArrayElement } from '../Animations/ArrayAnimations/HighlightArrayElement';
 import { exchangeArrayElement } from '../Animations/ArrayAnimations/ExchangeArrayElement';
+import { combineArrayElement } from '../Animations/ArrayAnimations/CombineArrayElement';
 
 export class TransformSpec {
 	/**
@@ -327,21 +328,35 @@ export class TransformSpec {
 
 				case transformType.EXCHANGE: {
 					const index = transform.args.item.map((item) => item.index);
-					if (transform.stagger) {
-						for (let i = 0; i < index.length; i++) {
-							const indexesToExchange = index[i];
-							await exchangeArrayElement(
-								indexesToExchange,
-								arrayDiagram,
-								1000,
-								transform.stagger
-							);
-						}
+					for (let i = 0; i < index.length; i++) {
+						const indexesToExchange = index[i];
+						await exchangeArrayElement(
+							indexesToExchange,
+							arrayDiagram,
+							1000,
+							transform.stagger
+						);
 					}
 					break;
 				}
 
 				case transformType.COMBINE: {
+					const index = transform.args.item.map((item) => item.index);
+					const value = transform.args.item.map((item) => item.value);
+
+					for (let i = 0; i < index.length; i++) {
+						const indexesToCombine = index[i];
+						const valuesToReplace = value[i];
+
+						await combineArrayElement(
+							indexesToCombine,
+							valuesToReplace,
+							arrayDiagram,
+							1000,
+							transform.stagger
+						);
+					}
+					break;
 				}
 
 				case transformType.MORPH: {

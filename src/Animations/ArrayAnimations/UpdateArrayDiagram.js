@@ -14,10 +14,9 @@ import { calcArrayItemPos } from '../../Auxillary/ArrayHelper/CalcArrayItemPos';
  */
 export async function updateArrayDiagram(arrayDiagram, duration, stagger) {
 	//Bind array items to array data
-	let updateSelection = arrayDiagram.items.data(
-		arrayDiagram.data,
-		(data) => data.key
-	);
+	let updateSelection = arrayDiagram.properties.SVG_CONTAINER.selectAll(
+		`g.array-item-${arrayDiagram.properties.DIAGRAM_ID}`
+	).data(arrayDiagram.data, (data) => data.key);
 
 	//Enter and exit selections
 	let enterSelection = updateSelection.enter();

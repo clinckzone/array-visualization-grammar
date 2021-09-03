@@ -55,14 +55,22 @@ export class ArrayDiagram {
 				.node();
 		});
 
+		const itemNodes = Array.from(
+			document.getElementsByClassName(
+				`array-item-${this.properties.DIAGRAM_ID}`
+			)
+		);
+
+		itemNodes.forEach((item, index, array) => {
+			const node = array.find((node) => node == orderedItems[index]);
+			document.getElementById('svg-container').appendChild(node);
+		});
+
 		const selection = this.properties.SVG_CONTAINER.selectAll(
 			`g.array-item-${this.properties.DIAGRAM_ID}`
 		);
 
-		this._items = selection;
-		this._items._groups[0] = orderedItems;
-
-		return this._items;
+		return selection;
 	}
 
 	/**

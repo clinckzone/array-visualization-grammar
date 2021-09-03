@@ -33,6 +33,7 @@ export async function exchangeArrayElement(
 			duration,
 			false
 		);
+
 		const arrData = arrayDiagram.data;
 		const tempData = arrData[indexesToExchange[i][0]];
 		arrData[indexesToExchange[i][0]] = arrData[indexesToExchange[i][1]];
