@@ -16,30 +16,75 @@ export async function exchangeArrayElement(
 	duration,
 	stagger
 ) {
-	for (let i = 0; i < indexesToExchange.length; i++) {
-		const indexes = indexesToExchange[i];
+	if (stagger) {
+		for (let i = 0; i < indexesToExchange.length; i++) {
+			const startIndexes = indexesToExchange[i];
+			const endIndexes = [...startIndexes].reverse();
+
+			const tempArrayData = [...arrayDiagram.data];
+			[
+				tempArrayData[indexesToExchange[i][0]],
+				tempArrayData[indexesToExchange[i][1]],
+			] = [
+				tempArrayData[indexesToExchange[i][1]],
+				tempArrayData[indexesToExchange[i][0]],
+			];
+
+			const selection = d3.selectAll(
+				startIndexes.map(
+					(item, index, array) =>
+						arrayDiagram.items.nodes()[array[index]]
+				)
+			);
+
+			await translateArrayElement(
+				selection,
+				arrayDiagram,
+				arrayDiagram,
+				startIndexes,
+				endIndexes,
+				duration,
+				false
+			);
+
+			arrayDiagram.data = tempArrayData;
+			await updateArrayDiagram(arrayDiagram, 0, false);
+		}
+	} else {
+		let startIndexes = [];
+		let endIndexes = [];
+		const tempArrayData = [...arrayDiagram.data];
+
+		for (let i = 0; i < indexesToExchange.length; i++) {
+			startIndexes = startIndexes.concat(indexesToExchange[i]);
+			endIndexes = endIndexes.concat([...indexesToExchange[i]].reverse());
+
+			[
+				tempArrayData[indexesToExchange[i][0]],
+				tempArrayData[indexesToExchange[i][1]],
+			] = [
+				tempArrayData[indexesToExchange[i][1]],
+				tempArrayData[indexesToExchange[i][0]],
+			];
+		}
+
 		const selection = d3.selectAll(
-			indexes.map(
-				(item, index) => arrayDiagram.items.nodes()[indexes[index]]
+			startIndexes.map(
+				(item, index, array) => arrayDiagram.items.nodes()[array[index]]
 			)
 		);
-		const revArr = [...indexes].reverse();
+
 		await translateArrayElement(
 			selection,
 			arrayDiagram,
 			arrayDiagram,
-			indexes,
-			revArr,
+			startIndexes,
+			endIndexes,
 			duration,
 			false
 		);
 
-		const arrData = arrayDiagram.data;
-		const tempData = arrData[indexesToExchange[i][0]];
-		arrData[indexesToExchange[i][0]] = arrData[indexesToExchange[i][1]];
-		arrData[indexesToExchange[i][1]] = tempData;
-		arrayDiagram.data = arrData;
-
+		arrayDiagram.data = tempArrayData;
 		await updateArrayDiagram(arrayDiagram, 0, false);
 	}
 }

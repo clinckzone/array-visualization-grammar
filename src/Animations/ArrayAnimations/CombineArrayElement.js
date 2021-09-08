@@ -21,34 +21,102 @@ export async function combineArrayElement(
 	duration,
 	stagger
 ) {
-	const startIndexes = indexesToCombine.map((item, index) => item[0]);
-	const endIndexes = indexesToCombine.map((item, index) => item[1]);
+	if (stagger) {
+		const startIndexes = indexesToCombine.map((item, index) => item[0]);
 
-	const startSel = d3.selectAll(
-		startIndexes.map(
-			(item, index, array) => arrayDiagram.items.nodes()[array[index]]
-		)
-	);
+		for (let i = 0; i < indexesToCombine.length; i++) {
+			const startIndex = [indexesToCombine[i][0]];
+			const endIndex = [indexesToCombine[i][1]];
+			const value = [valuesToReplace[i]];
 
-	const endSel = d3.selectAll(
-		endIndexes.map(
-			(item, index, array) => arrayDiagram.items.nodes()[array[index]]
-		)
-	);
+			const startSel = d3.selectAll(
+				startIndex.map(
+					(item, index, array) =>
+						arrayDiagram.items.nodes()[array[index]]
+				)
+			);
 
-	await translateArrayElement(
-		startSel,
-		arrayDiagram,
-		arrayDiagram,
-		startIndexes,
-		endIndexes,
-		duration,
-		stagger
-	);
+			startSel.select('.array-item-index').remove();
 
-	let data = arrayDiagram.data;
-	data = data.filter((item, index) => !startIndexes.includes(index));
-	arrayDiagram.data = data;
+			const endSel = d3.selectAll(
+				endIndex.map(
+					(item, index, array) =>
+						arrayDiagram.items.nodes()[array[index]]
+				)
+			);
 
-	await updateArrayDiagram(arrayDiagram, duration, stagger);
+			await translateArrayElement(
+				startSel,
+				arrayDiagram,
+				arrayDiagram,
+				startIndex,
+				endIndex,
+				duration,
+				false
+			);
+
+			await morphArrayElement(endSel, value, duration, stagger);
+		}
+
+		let tempData = [...arrayDiagram.data];
+		startIndexes.forEach((item, index) => {
+			tempData[item].value = valuesToReplace[index];
+		});
+		tempData = tempData.filter(
+			(item, index) => !startIndexes.includes(index)
+		);
+
+		arrayDiagram.data = tempData;
+		await updateArrayDiagram(arrayDiagram, duration, stagger);
+	} else {
+		const startIndexes = indexesToCombine.map((item, index) => item[0]);
+		const endIndexes = indexesToCombine.map((item, index) => item[1]);
+
+		const startSel = d3.selectAll(
+			startIndexes.map(
+				(item, index, array) => arrayDiagram.items.nodes()[array[index]]
+			)
+		);
+
+		startSel.select('.array-item-index').remove();
+
+		const endSel = d3.selectAll(
+			endIndexes.map(
+				(item, index, array) => arrayDiagram.items.nodes()[array[index]]
+			)
+		);
+
+		await translateArrayElement(
+			startSel,
+			arrayDiagram,
+			arrayDiagram,
+			startIndexes,
+			endIndexes,
+			duration,
+			false
+		);
+
+		let tempData = [...arrayDiagram.data];
+		startIndexes.forEach((item, index) => {
+			tempData[item].value = valuesToReplace[index];
+		});
+		tempData = tempData.filter(
+			(item, index) => !startIndexes.includes(index)
+		);
+
+		arrayDiagram.data = tempData;
+		const morphPromise = morphArrayElement(
+			endSel,
+			valuesToReplace,
+			duration,
+			stagger
+		);
+		const updatePromise = updateArrayDiagram(
+			arrayDiagram,
+			duration,
+			stagger
+		);
+
+		await Promise.all([morphPromise, updatePromise]);
+	}
 }
