@@ -22,9 +22,8 @@ export async function addArrayElement(
 	const transformationPromises = [];
 
 	//Check if the addition needs to be staggered
-	let delay = 0;
-
 	//If that is the case, calculate duration and delay for each item
+	let delay = 0;
 	if (stagger === true) {
 		duration = duration / enterSelection.size();
 		delay = duration;

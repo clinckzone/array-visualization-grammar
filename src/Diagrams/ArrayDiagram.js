@@ -27,16 +27,6 @@ export class ArrayDiagram {
 				};
 			}
 		});
-
-		//Update the selection according to the data
-		this.items = this._data.map((item) => {
-			return d3
-				.selectAll(`g.array-item-${this.properties.DIAGRAM_ID}`)
-				.filter((data) => {
-					return data.value === item.value;
-				})
-				.node();
-		});
 	}
 
 	get data() {
@@ -45,28 +35,35 @@ export class ArrayDiagram {
 
 	/**
 	 * Arranges all the svg nodes in the order corresponding
-	 * to each item of in array diagrams' data
+	 * to each item of in array diagrams' data. Returns a d3
+	 * selection of items that in the array diagram.
 	 */
-	set items(items) {
+	get items() {
+		//Update the selection according to the data
+		const dataNodes = this.data.map((item) => {
+			return d3
+				.selectAll(`g.array-item-${this.properties.DIAGRAM_ID}`)
+				.filter((data) => {
+					return data.value === item.value;
+				})
+				.node();
+		});
+
 		//Select the all items of the array diagram
-		const nodes = Array.from(
+		const domNodes = Array.from(
 			document.getElementsByClassName(
 				`array-item-${this.properties.DIAGRAM_ID}`
 			)
 		);
 
-		//Reorder their position
-		nodes.forEach((item, index, array) => {
-			const node = array.find((node) => node == items[index]);
+		//Reorder their position in svg dom
+		domNodes.forEach((item, index, array) => {
+			const node = array.find((node) => node == dataNodes[index]);
 			if (node !== undefined)
 				document.getElementById('svg-container').appendChild(node);
 		});
-	}
 
-	/**
-	 * Returns a d3 selection of items that in the array diagram
-	 */
-	get items() {
+		//Now select the svg elemnets in order
 		const selection = this.properties.SVG_CONTAINER.selectAll(
 			`g.array-item-${this.properties.DIAGRAM_ID}`
 		);
