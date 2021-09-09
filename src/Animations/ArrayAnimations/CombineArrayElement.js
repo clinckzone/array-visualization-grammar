@@ -2,7 +2,6 @@
 import * as d3 from 'd3';
 import { ArrayDiagram } from '../../Diagrams/ArrayDiagram';
 import { morphArrayElement } from './MorphArrayElement';
-import { removeArrayElement } from './RemoveArrayElement';
 import { translateArrayElement } from './TranslateArrayElement';
 import { updateArrayDiagram } from './UpdateArrayDiagram';
 

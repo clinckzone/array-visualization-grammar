@@ -7,11 +7,9 @@ import { ArrayDiagram } from '../../Diagrams/ArrayDiagram';
  * @param {number} duration Total duration of the transition
  */
 export async function updateArrayBoundary(arrayDiagram, duration) {
-	//Create a Promise that resolves when the transition ends
-	const updateBoundaryPromise = arrayDiagram.boundary
+	return arrayDiagram.boundary
 		.transition()
-		.duration(duration / 2)
-		.style('opacity', 1.0)
+		.duration(duration)
 		.attr(
 			'width',
 			(arrayDiagram.properties.ITEM_SIZE +
@@ -20,6 +18,4 @@ export async function updateArrayBoundary(arrayDiagram, duration) {
 				arrayDiagram.properties.PADDING
 		)
 		.end();
-
-	return updateBoundaryPromise;
 }
