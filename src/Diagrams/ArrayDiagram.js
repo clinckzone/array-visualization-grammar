@@ -1,7 +1,7 @@
 //@ts-check
 import * as d3 from 'd3';
 import { v4 as uuidv4 } from 'uuid';
-import { ArrayProp } from '../Auxillary/ArrayHelper/ArrayProp';
+import { ArrayProp } from '../Auxillary/ArrayProp';
 
 export class ArrayDiagram {
 	/**
@@ -42,7 +42,7 @@ export class ArrayDiagram {
 		//Update the selection according to the data
 		const dataNodes = this.data.map((item) => {
 			return d3
-				.selectAll(`g.array-item-${this.properties.DIAGRAM_ID}`)
+				.selectAll(`g.array-item-${this.properties.id}`)
 				.filter((data) => {
 					return data.value === item.value;
 				})
@@ -51,9 +51,7 @@ export class ArrayDiagram {
 
 		//Select the all items of the array diagram
 		const domNodes = Array.from(
-			document.getElementsByClassName(
-				`array-item-${this.properties.DIAGRAM_ID}`
-			)
+			document.getElementsByClassName(`array-item-${this.properties.id}`)
 		);
 
 		//Reorder their position in svg dom
@@ -64,8 +62,8 @@ export class ArrayDiagram {
 		});
 
 		//Now select the svg elemnets in order
-		const selection = this.properties.SVG_CONTAINER.selectAll(
-			`g.array-item-${this.properties.DIAGRAM_ID}`
+		const selection = this.properties.svgContainer.selectAll(
+			`g.array-item-${this.properties.id}`
 		);
 
 		return selection;
@@ -76,11 +74,12 @@ export class ArrayDiagram {
 	 * @returns {d3.Selection}
 	 */
 	initializeArrayLabel() {
-		const label = this.properties.SVG_CONTAINER.append('text')
-			.attr('class', `array-label-${this.properties.DIAGRAM_ID}`)
-			.attr('x', `${this.properties.POSITION.x}`)
-			.attr('y', `${this.properties.POSITION.y}`)
-			.text(`${this.properties.DIAGRAM_LABEL}`)
+		const label = this.properties.svgContainer
+			.append('text')
+			.attr('class', `array-label-${this.properties.id}`)
+			.attr('x', `${this.properties.position.x}`)
+			.attr('y', `${this.properties.position.y}`)
+			.text(`${this.properties.label}`)
 			.style('dominant-baseline', 'text-after-edge')
 			.style('font-size', '12px');
 
@@ -92,20 +91,40 @@ export class ArrayDiagram {
 	 * @returns {d3.Selection}
 	 */
 	initializeArrayBoundary() {
-		const boundary = this.properties.SVG_CONTAINER.append('rect')
-			.attr('class', `array-boundary-${this.properties.DIAGRAM_ID}`)
+		const boundary = this.properties.svgContainer
+			.append('rect')
+			.attr('class', `array-boundary-${this.properties.id}`)
 			.attr(
 				'height',
-				this.properties.ITEM_SIZE + 2 * this.properties.PADDING
+				this.properties.itemSize + 2 * this.properties.padding
 			)
-			.attr('x', `${this.properties.POSITION.x}`)
-			.attr('y', `${this.properties.POSITION.y}`)
-			.attr('rx', 0.1 * this.properties.ITEM_SIZE)
-			.attr('ry', 0.1 * this.properties.ITEM_SIZE)
+			.attr('x', `${this.properties.position.x}`)
+			.attr('y', `${this.properties.position.y}`)
+			.attr('rx', 0.1 * this.properties.itemSize)
+			.attr('ry', 0.1 * this.properties.itemSize)
 			.style('fill', '#fafafa')
 			.style('stroke', 'rgb(0, 0, 0, 0.05)')
 			.style('stroke-width', '1px');
 
 		return boundary;
+	}
+
+	/**
+	 * The function returns the x and y position of array item
+	 * within the array diagram
+	 * @param {number} index Position of the item within the array
+	 * @returns {{x: number; y: number}} Calculated X and Y position of the array item
+	 */
+	calculateItemPosition(index) {
+		return {
+			x:
+				(this.properties.itemSize + this.properties.padding) *
+					(index + 0.5) +
+				this.properties.padding / 2 +
+				this.properties.position.x,
+			y:
+				(this.properties.itemSize + this.properties.padding) / 2 +
+				this.properties.position.y,
+		};
 	}
 }

@@ -6,16 +6,16 @@ import { TransformDataSpec } from './TransformDataSpec';
 
 import { color } from '../Auxillary/Color';
 import { transformType } from '../Auxillary/TransformType';
-import { ArrayProp } from '../Auxillary/ArrayHelper/ArrayProp';
+import { ArrayProp } from '../Auxillary/ArrayProp';
 
 import { ArrayDiagram } from '../Diagrams/ArrayDiagram';
 import { PrimitiveDiagram } from '../Diagrams/PrimitiveDiagram';
-import { morphArrayElement } from '../Animations/ArrayAnimations/MorphArrayElement';
-import { updateArrayDiagram } from '../Animations/ArrayAnimations/UpdateArrayDiagram';
-import { returnArrayElement } from '../Animations/ArrayAnimations/ReturnArrayElement';
-import { highlightArrayElement } from '../Animations/ArrayAnimations/HighlightArrayElement';
-import { exchangeArrayElement } from '../Animations/ArrayAnimations/ExchangeArrayElement';
-import { combineArrayElement } from '../Animations/ArrayAnimations/CombineArrayElement';
+import { morphArrayElement } from '../Animations/Array/MorphArrayElement';
+import { updateArrayDiagram } from '../Animations/Array/UpdateArrayDiagram';
+import { returnArrayElement } from '../Animations/Array/ReturnArrayElement';
+import { highlightArrayElement } from '../Animations/Array/HighlightArrayElement';
+import { exchangeArrayElement } from '../Animations/Array/ExchangeArrayElement';
+import { combineArrayElement } from '../Animations/Array/CombineArrayElement';
 
 export class TransformSpec {
 	/**
@@ -49,20 +49,19 @@ export class TransformSpec {
 			//Match the transformation type
 			switch (transform.type) {
 				case transformType.INITIALIZE: {
-					//Always update the array diagrams' data before using it
-					arrayDiagram.data = transform.args.item.map(
-						(item) => item.value
-					);
+					const data = transform.args.item.map((item) => item.value);
+
 					await updateArrayDiagram(
+						data,
 						arrayDiagram,
 						transform.duration,
 						transform.stagger
 					);
+
 					break;
 				}
 
 				case transformType.ADD: {
-					//Store a reference of the array diagrams' data
 					const data = arrayDiagram.data;
 
 					//Sort the items in ascending order
@@ -70,26 +69,22 @@ export class TransformSpec {
 
 					//Go through each item in the sorted array and add it in the array diagram
 					for (let i = 0; i < transform.args.item.length; i++) {
-						//Get the value and index of the current item in the array
 						const index = transform.args.item[i].index;
 						const value = transform.args.item[i].value;
-
-						//Add a new item to the data
 						data.splice(index, 0, value);
 					}
 
-					//Update the array diagrams' data before updating it
-					arrayDiagram.data = data;
 					await updateArrayDiagram(
+						data,
 						arrayDiagram,
 						transform.duration,
 						transform.stagger
 					);
+
 					break;
 				}
 
 				case transformType.REMOVE: {
-					//Store a copy of the array diagrams' data
 					const data = arrayDiagram.data;
 
 					//Sort the items in descending order
@@ -97,20 +92,17 @@ export class TransformSpec {
 
 					//Go through each item in the sorted array and remove it from the array diagram
 					for (let i = 0; i < transform.args.item.length; i++) {
-						//Get the index from the current item
 						const index = transform.args.item[i].index;
-
-						//Remove the item from the data
 						data.splice(index, 1);
 					}
 
-					//Update the array diagrams' data before updating it
-					arrayDiagram.data = data;
 					await updateArrayDiagram(
+						data,
 						arrayDiagram,
 						transform.duration,
 						transform.stagger
 					);
+
 					break;
 				}
 
@@ -131,9 +123,8 @@ export class TransformSpec {
 							: arrayData.push(item);
 					}
 
-					//Assign the new and rearranged array data to the array diagram
-					arrayDiagram.data = arrayData;
 					await updateArrayDiagram(
+						arrayData,
 						arrayDiagram,
 						transform.duration,
 						transform.stagger
@@ -155,8 +146,8 @@ export class TransformSpec {
 						selection,
 						transform.duration,
 						transform.stagger,
-						color.HIGHLIGHT_DEFAULT,
-						color.ITEM_DEFAULT
+						color.HIGHLIGHT,
+						color.ITEM
 					);
 
 					break;
@@ -175,8 +166,8 @@ export class TransformSpec {
 						selection,
 						transform.duration,
 						transform.stagger,
-						color.HIGHLIGHT_DEFAULT,
-						color.ADD_DEFAULT
+						color.HIGHLIGHT,
+						color.ADD
 					);
 
 					break;
@@ -195,8 +186,8 @@ export class TransformSpec {
 						selection,
 						transform.duration,
 						transform.stagger,
-						color.ITEM_DEFAULT,
-						color.ITEM_DEFAULT
+						color.ITEM,
+						color.ITEM
 					);
 
 					break;
@@ -213,20 +204,16 @@ export class TransformSpec {
 						if (returnArray === null) {
 							//Create a object to be used as the new position for the new array diagram
 							const returnPosition = {
-								x: arrayDiagram.properties.POSITION.x,
+								x: arrayDiagram.properties.position.x,
 								y:
-									arrayDiagram.properties.POSITION.y +
-									2.5 * arrayDiagram.properties.ITEM_SIZE,
+									arrayDiagram.properties.position.y +
+									2.5 * arrayDiagram.properties.itemSize,
 							};
 
 							// Create a new ArrayProp object to be used for translation and for the new array diagram
-							const returnArrProp = new ArrayProp(
-								'Return Value',
-								returnPosition,
-								arrayDiagram.properties.ITEM_SIZE,
-								arrayDiagram.properties.PADDING,
-								d3.select('#svg-container')
-							);
+							const returnArrProp = Object.create(ArrayProp);
+							returnArrProp.name = 'Return Value';
+							returnArrProp.position = returnPosition;
 
 							//Create a new array diagram that will store returned values
 							returnArray = new ArrayDiagram(returnArrProp);
@@ -271,20 +258,16 @@ export class TransformSpec {
 					) {
 						//Create a object to be used as the new position for the new array diagram
 						const returnPosition = {
-							x: arrayDiagram.properties.POSITION.x,
+							x: arrayDiagram.properties.position.x,
 							y:
-								arrayDiagram.properties.POSITION.y +
-								2.5 * arrayDiagram.properties.ITEM_SIZE,
+								arrayDiagram.properties.position.y +
+								2.5 * arrayDiagram.properties.itemSize,
 						};
 
 						// Create a new ArrayProp object to be used for translation and for the new array diagram
-						const returnArrProp = new ArrayProp(
-							'Return Value',
-							returnPosition,
-							arrayDiagram.properties.ITEM_SIZE,
-							arrayDiagram.properties.PADDING,
-							arrayDiagram.properties.SVG_CONTAINER
-						);
+						const returnArrProp = Object.create(ArrayProp);
+						returnArrProp.name = 'Return Value';
+						returnArrProp.position = returnPosition;
 
 						//Create a new array diagram that will store returned values
 						returnArray = new PrimitiveDiagram(returnArrProp);
@@ -316,6 +299,7 @@ export class TransformSpec {
 
 							//Update the array
 							await updateArrayDiagram(
+								returnArray.data,
 								returnArray,
 								transform.duration,
 								transform.stagger

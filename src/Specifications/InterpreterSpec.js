@@ -1,10 +1,9 @@
 //@ts-check
-import * as d3 from 'd3';
 import { DataSpec } from './DataSpec';
 import { StyleSpec } from './StyleSpec';
 import { TransformSpec } from './TransformSpec';
 import { ArrayDiagram } from '../Diagrams/ArrayDiagram';
-import { ArrayProp } from '../Auxillary/ArrayHelper/ArrayProp';
+import { ArrayProp } from '../Auxillary/ArrayProp';
 
 export class InterpreterSpec {
 	/**
@@ -30,18 +29,10 @@ export class InterpreterSpec {
 
 	async interpret() {
 		//Based on the data, create an array diagram
-		const svgContainer = d3.select('#svg-container');
-		const arrayProps = new ArrayProp(
-			this.data.name,
-			{
-				x: 10,
-				y: 20,
-			},
-			30,
-			10,
-			svgContainer
-		);
-		let arrayDiagram = new ArrayDiagram(arrayProps);
+		const arrayProp = Object.create(ArrayProp);
+		arrayProp.label = this.data.name;
+
+		let arrayDiagram = new ArrayDiagram(arrayProp);
 
 		//Applies the transformation on the array in order
 		for (let i = 0; i < this.transform.length; i++) {

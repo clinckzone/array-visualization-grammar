@@ -28,7 +28,7 @@ export class StyleSpec {
 		this.theme.label.color =
 			this.theme.label.color !== undefined
 				? this.theme.label.color
-				: color.LABEL_DEFAULT;
+				: color.LABEL;
 		this.theme.label.visible =
 			this.theme.label.visible !== undefined
 				? this.theme.label.visible
@@ -39,11 +39,11 @@ export class StyleSpec {
 		this.theme.item.fill =
 			this.theme.item.fill !== undefined
 				? this.theme.item.fill
-				: color.ITEM_DEFAULT;
+				: color.ITEM;
 		this.theme.item.stroke =
 			this.theme.item.stroke !== undefined
 				? this.theme.item.stroke
-				: color.ITEM_DEFAULT;
+				: color.ITEM;
 		this.theme.item.strokeWidth =
 			this.theme.item.strokeWidth !== undefined
 				? this.theme.item.strokeWidth
@@ -81,7 +81,7 @@ export class StyleSpec {
 		this.theme.index.color =
 			this.theme.index.color !== undefined
 				? this.theme.index.color
-				: color.INDEX_DEFAULT;
+				: color.INDEX;
 		this.theme.index.visible =
 			this.theme.index.visible !== undefined
 				? this.theme.index.visible
@@ -93,11 +93,11 @@ export class StyleSpec {
 		this.theme.container.fill =
 			this.theme.container.fill !== undefined
 				? this.theme.container.fill
-				: color.CONTAINER_DEFAULT;
+				: color.CONTAINER;
 		this.theme.container.stroke =
 			this.theme.container.stroke !== undefined
 				? this.theme.container.stroke
-				: color.CONTAINER_DEFAULT;
+				: color.CONTAINER;
 		this.theme.container.strokeWidth =
 			this.theme.container.strokeWidth !== undefined
 				? this.theme.container.strokeWidth
@@ -151,7 +151,7 @@ export class StyleSpec {
 		this.transform.add.stroke =
 			this.transform.add.stroke !== undefined
 				? this.transform.add.stroke
-				: color.ADD_DEFAULT;
+				: color.ADD;
 		this.transform.add.strokeWidth =
 			this.transform.add.strokeWidth !== undefined
 				? this.transform.add.strokeWidth
@@ -159,7 +159,7 @@ export class StyleSpec {
 		this.transform.add.fill =
 			this.transform.add.fill !== undefined
 				? this.transform.add.fill
-				: color.ADD_DEFAULT;
+				: color.ADD;
 		this.transform.add.stagger =
 			this.transform.add.stagger !== undefined
 				? this.transform.add.stagger
@@ -179,7 +179,7 @@ export class StyleSpec {
 		this.transform.remove.stroke =
 			this.transform.remove.stroke !== undefined
 				? this.transform.remove.stroke
-				: color.REMOVE_DEFAULT;
+				: color.REMOVE;
 		this.transform.remove.strokeWidth =
 			this.transform.remove.strokeWidth !== undefined
 				? this.transform.remove.strokeWidth
@@ -187,7 +187,7 @@ export class StyleSpec {
 		this.transform.remove.fill =
 			this.transform.remove.fill !== undefined
 				? this.transform.remove.fill
-				: color.REMOVE_DEFAULT;
+				: color.REMOVE;
 		this.transform.remove.stagger =
 			this.transform.remove.stagger !== undefined
 				? this.transform.remove.stagger
@@ -225,7 +225,7 @@ export class StyleSpec {
 		this.transform.highlight.stroke =
 			this.transform.highlight.stroke !== undefined
 				? this.transform.highlight.stroke
-				: color.REMOVE_DEFAULT;
+				: color.REMOVE;
 		this.transform.highlight.strokeWidth =
 			this.transform.highlight.strokeWidth !== undefined
 				? this.transform.highlight.strokeWidth
@@ -233,7 +233,7 @@ export class StyleSpec {
 		this.transform.highlight.fill =
 			this.transform.highlight.fill !== undefined
 				? this.transform.highlight.fill
-				: color.REMOVE_DEFAULT;
+				: color.REMOVE;
 		this.transform.highlight.stagger =
 			this.transform.highlight.stagger !== undefined
 				? this.transform.highlight.stagger
@@ -253,7 +253,7 @@ export class StyleSpec {
 		this.transform.select.stroke =
 			this.transform.select.stroke !== undefined
 				? this.transform.select.stroke
-				: color.ADD_DEFAULT;
+				: color.ADD;
 		this.transform.select.strokeWidth =
 			this.transform.select.strokeWidth !== undefined
 				? this.transform.select.strokeWidth
@@ -261,7 +261,7 @@ export class StyleSpec {
 		this.transform.select.fill =
 			this.transform.select.fill !== undefined
 				? this.transform.select.fill
-				: color.ADD_DEFAULT;
+				: color.ADD;
 		this.transform.select.stagger =
 			this.transform.select.stagger !== undefined
 				? this.transform.select.stagger
