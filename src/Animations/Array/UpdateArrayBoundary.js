@@ -12,10 +12,10 @@ export async function updateArrayBoundary(arrayDiagram, duration) {
 		.duration(duration)
 		.attr(
 			'width',
-			(arrayDiagram.properties.itemSize +
-				arrayDiagram.properties.padding) *
+			(arrayDiagram.properties.item.itemSize +
+				arrayDiagram.properties.item.padding) *
 				arrayDiagram.data.length +
-				arrayDiagram.properties.padding
+				arrayDiagram.properties.item.padding
 		)
 		.end();
 }

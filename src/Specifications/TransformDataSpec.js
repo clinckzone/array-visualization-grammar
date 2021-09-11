@@ -1,9 +1,9 @@
+import { TransformProp } from '../Auxillary/TransformProp';
+
 //@ts-check
 export class TransformDataSpec {
 	/**
 	 * TransformDataSpec stores a single transformation data inside itself
-	 * @param {{type: string; value: any[], index: any[]; stroke: String; strokeWidth: String; fill: String; stagger: boolean; duration: number; easingFunction: String}} rawData
-	 * @param {{stroke: String; strokeWidth: String; fill: String; stagger: boolean; durationEach: number; easingFunction: String;}} transformStyleSpec
 	 */
 	constructor(rawData, transformStyleSpec) {
 		//Stored Data types
@@ -18,40 +18,51 @@ export class TransformDataSpec {
 		//Get the transformation arguments
 		this.initializeArgs(rawData);
 
-		//Stroke color
-		this.stroke =
-			rawData.stroke !== undefined
-				? rawData.stroke
-				: transformStyleSpec.stroke;
-
-		//Stroke width
-		this.strokeWidth =
-			rawData.strokeWidth !== undefined
-				? rawData.strokeWidth
-				: transformStyleSpec.strokeWidth;
+		//Transform properties
+		this.properties = Object.create(TransformProp);
 
 		//Fill color
-		this.fill =
-			rawData.fill !== undefined ? rawData.fill : transformStyleSpec.fill;
+		this.properties.fill =
+			rawData.fill !== undefined
+				? rawData.fill
+				: transformStyleSpec.fill !== undefined
+				? transformStyleSpec.fill
+				: null;
+
+		//Stroke color
+		this.properties.stroke =
+			rawData.stroke !== undefined
+				? rawData.stroke
+				: transformStyleSpec.stroke !== undefined
+				? transformStyleSpec.stroke
+				: null;
+
+		//Stroke width
+		this.properties.strokeWidth =
+			rawData.strokeWidth !== undefined
+				? rawData.strokeWidth
+				: transformStyleSpec.strokeWidth !== undefined
+				? transformStyleSpec.strokeWidth
+				: null;
 
 		//Should the transformation be staggered?
-		this.stagger =
+		this.properties.stagger =
 			rawData.stagger !== undefined
 				? rawData.stagger
 				: transformStyleSpec.stagger;
 
 		//Specifiy duration property
-		this.duration =
+		this.properties.duration =
 			rawData.duration !== undefined
 				? rawData.duration
 				: this.stagger
-				? transformStyleSpec.durationEach
-				: this.args.item.length * transformStyleSpec.durationEach;
+				? this.args.item.length * transformStyleSpec.durationEach
+				: transformStyleSpec.durationEach;
 
 		//Specify the easing function
-		this.easingFunction =
+		this.properties.easingFunction =
 			rawData.easingFunction !== undefined
-				? rawData.easingFunction
+				? `d3.${rawData.easingFunction}`
 				: transformStyleSpec.easingFunction;
 	}
 

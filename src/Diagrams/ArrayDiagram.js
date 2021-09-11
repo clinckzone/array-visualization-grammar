@@ -79,7 +79,7 @@ export class ArrayDiagram {
 			.attr('class', `array-label-${this.properties.id}`)
 			.attr('x', `${this.properties.position.x}`)
 			.attr('y', `${this.properties.position.y}`)
-			.text(`${this.properties.label}`)
+			.text(`${this.properties.name}`)
 			.style('dominant-baseline', 'text-after-edge')
 			.style('font-size', '12px');
 
@@ -96,12 +96,12 @@ export class ArrayDiagram {
 			.attr('class', `array-boundary-${this.properties.id}`)
 			.attr(
 				'height',
-				this.properties.itemSize + 2 * this.properties.padding
+				this.properties.item.itemSize + 2 * this.properties.item.padding
 			)
 			.attr('x', `${this.properties.position.x}`)
 			.attr('y', `${this.properties.position.y}`)
-			.attr('rx', 0.1 * this.properties.itemSize)
-			.attr('ry', 0.1 * this.properties.itemSize)
+			.attr('rx', 0.1 * this.properties.item.itemSize)
+			.attr('ry', 0.1 * this.properties.item.itemSize)
 			.style('fill', '#fafafa')
 			.style('stroke', 'rgb(0, 0, 0, 0.05)')
 			.style('stroke-width', '1px');
@@ -118,12 +118,13 @@ export class ArrayDiagram {
 	calculateItemPosition(index) {
 		return {
 			x:
-				(this.properties.itemSize + this.properties.padding) *
+				(this.properties.item.itemSize + this.properties.item.padding) *
 					(index + 0.5) +
-				this.properties.padding / 2 +
+				this.properties.item.padding / 2 +
 				this.properties.position.x,
 			y:
-				(this.properties.itemSize + this.properties.padding) / 2 +
+				(this.properties.item.itemSize + this.properties.item.padding) /
+					2 +
 				this.properties.position.y,
 		};
 	}

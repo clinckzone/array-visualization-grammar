@@ -1,3 +1,6 @@
+//@ts-check
+import { color } from '../Auxillary/Color';
+
 export const templateSpec = {
 	data: {
 		name: 'Arr',
@@ -37,32 +40,34 @@ export const templateSpec = {
 	style: {
 		theme: {
 			label: {
-				font: 'Arial',
+				font: 'Fira Sans',
 				fontSize: '12px',
 				fontWeight: 'normal',
-				color: 'grey',
+				color: color.LABEL,
+				visible: true,
+			},
+			container: {
+				fill: color.CONTAINER,
+				stroke: color.CONTAINER,
+				strokeWidth: '1px',
+				visible: true,
+			},
+			index: {
+				font: 'Fira Sans',
+				fontSize: '10px',
+				fontWeight: 'normal',
+				color: color.INDEX,
 				visible: true,
 			},
 			item: {
-				fill: 'grey',
-				stroke: 'black',
+				fill: color.ITEM,
+				stroke: color.ITEM,
 				strokeWidth: '1px',
 				font: 'Arial',
 				fontSize: '14px',
 				fontWeight: 'normal',
-				visible: true,
-			},
-			index: {
-				font: 'Arial',
-				fontSize: '10px',
-				fontWeight: 'normal',
-				color: 'grey',
-				visible: true,
-			},
-			container: {
-				fill: 'grey',
-				stroke: 'black',
-				strokeWidth: '1px',
+				itemSize: 30,
+				padding: 10,
 				visible: true,
 			},
 		},

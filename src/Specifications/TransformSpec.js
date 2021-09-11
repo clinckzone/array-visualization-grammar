@@ -54,8 +54,8 @@ export class TransformSpec {
 					await updateArrayDiagram(
 						data,
 						arrayDiagram,
-						transform.duration,
-						transform.stagger
+						transform.properties.duration,
+						transform.properties.stagger
 					);
 
 					break;
@@ -77,8 +77,8 @@ export class TransformSpec {
 					await updateArrayDiagram(
 						data,
 						arrayDiagram,
-						transform.duration,
-						transform.stagger
+						transform.properties.duration,
+						transform.properties.stagger
 					);
 
 					break;
@@ -99,8 +99,8 @@ export class TransformSpec {
 					await updateArrayDiagram(
 						data,
 						arrayDiagram,
-						transform.duration,
-						transform.stagger
+						transform.properties.duration,
+						transform.properties.stagger
 					);
 
 					break;
@@ -126,8 +126,8 @@ export class TransformSpec {
 					await updateArrayDiagram(
 						arrayData,
 						arrayDiagram,
-						transform.duration,
-						transform.stagger
+						transform.properties.duration,
+						transform.properties.stagger
 					);
 
 					break;
@@ -144,8 +144,8 @@ export class TransformSpec {
 					//Highlight thoses elements
 					await highlightArrayElement(
 						selection,
-						transform.duration,
-						transform.stagger,
+						transform.properties.duration,
+						transform.properties.stagger,
 						color.HIGHLIGHT,
 						color.ITEM
 					);
@@ -164,8 +164,8 @@ export class TransformSpec {
 					//Select thoses elements
 					await highlightArrayElement(
 						selection,
-						transform.duration,
-						transform.stagger,
+						transform.properties.duration,
+						transform.properties.stagger,
 						color.HIGHLIGHT,
 						color.ADD
 					);
@@ -184,8 +184,8 @@ export class TransformSpec {
 					//Deselect thoses elements
 					await highlightArrayElement(
 						selection,
-						transform.duration,
-						transform.stagger,
+						transform.properties.duration,
+						transform.properties.stagger,
 						color.ITEM,
 						color.ITEM
 					);
@@ -207,7 +207,7 @@ export class TransformSpec {
 								x: arrayDiagram.properties.position.x,
 								y:
 									arrayDiagram.properties.position.y +
-									2.5 * arrayDiagram.properties.itemSize,
+									2.5 * arrayDiagram.properties.item.itemSize,
 							};
 
 							// Create a new ArrayProp object to be used for translation and for the new array diagram
@@ -250,8 +250,8 @@ export class TransformSpec {
 							arrayDiagram,
 							returnArray,
 							index,
-							transform.duration,
-							transform.stagger
+							transform.properties.duration,
+							transform.properties.stagger
 						);
 					} else if (
 						transform.args.type === transform.dataType.PRIMITIVE
@@ -261,7 +261,7 @@ export class TransformSpec {
 							x: arrayDiagram.properties.position.x,
 							y:
 								arrayDiagram.properties.position.y +
-								2.5 * arrayDiagram.properties.itemSize,
+								2.5 * arrayDiagram.properties.item.itemSize,
 						};
 
 						// Create a new ArrayProp object to be used for translation and for the new array diagram
@@ -288,8 +288,8 @@ export class TransformSpec {
 								arrayDiagram,
 								returnArray,
 								index,
-								transform.duration,
-								transform.stagger
+								transform.properties.duration,
+								transform.properties.stagger
 							);
 						} else if (transform.args.item[0].value !== undefined) {
 							const value = transform.args.item.map(
@@ -301,8 +301,8 @@ export class TransformSpec {
 							await updateArrayDiagram(
 								returnArray.data,
 								returnArray,
-								transform.duration,
-								transform.stagger
+								transform.properties.duration,
+								transform.properties.stagger
 							);
 						}
 					}
@@ -318,7 +318,7 @@ export class TransformSpec {
 							indexesToExchange,
 							arrayDiagram,
 							1000,
-							transform.stagger
+							transform.properties.stagger
 						);
 					}
 					break;
@@ -337,7 +337,7 @@ export class TransformSpec {
 							valuesToReplace,
 							arrayDiagram,
 							1000,
-							transform.stagger
+							transform.properties.stagger
 						);
 					}
 					break;
@@ -364,8 +364,8 @@ export class TransformSpec {
 					await morphArrayElement(
 						selection,
 						value,
-						transform.duration,
-						transform.stagger
+						transform.properties.duration,
+						transform.properties.stagger
 					);
 
 					break;

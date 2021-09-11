@@ -7,21 +7,25 @@ import { ArrayDiagram } from '../../Diagrams/ArrayDiagram';
  * @param {d3.Selection} selection D3 selection that references to the copied nodes
  * @param {ArrayDiagram} startArray The array diagram from where the item will start
  * @param {ArrayDiagram} endArray The array diagram where the item will go to
- * @param {number[]} fromIndex Indexes of the array items in the startArray that are to be translated from their position
- * @param {number[]} toIndex Indexes in the endArray to which the array items will be translated to
+ * @param {number[]} startIndex Indexes of the array items in the startArray that are to be translated from their position
+ * @param {number[]} endIndex Indexes in the endArray to which the array items will be translated to
  * @param {number} duration Total duration of the array in milliseconds.
  */
 export async function translateArrayElement(
 	selection,
 	startArray,
 	endArray,
-	fromIndex,
-	toIndex,
+	startIndex,
+	endIndex,
 	duration,
 	stagger
 ) {
-	//Factor
+	//Curviness of translation path
 	const factor = 4;
+
+	//Helpers objects
+	const lineGenerator = d3.line().curve(d3.curveNatural);
+	const xmlns = 'http://www.w3.org/2000/svg';
 
 	//Check if the translation needs to be staggered
 	//If that is the case, calculate duration and delay for each item
@@ -37,16 +41,13 @@ export async function translateArrayElement(
 		.duration(duration)
 		.delay((data, index) => index * delay)
 		.tween('itemTween', function (data, index) {
-			//A d3 line generator function
-			const lineGenerator = d3.line().curve(d3.curveNatural);
-
 			//Start point of translation
-			const x1 = startArray.calculateItemPosition(fromIndex[index]).x;
-			const y1 = startArray.calculateItemPosition(fromIndex[index]).y;
+			const x1 = startArray.calculateItemPosition(startIndex[index]).x;
+			const y1 = startArray.calculateItemPosition(startIndex[index]).y;
 
 			//End point of translation
-			const x2 = endArray.calculateItemPosition(toIndex[index]).x;
-			const y2 = endArray.calculateItemPosition(toIndex[index]).y;
+			const x2 = endArray.calculateItemPosition(endIndex[index]).x;
+			const y2 = endArray.calculateItemPosition(endIndex[index]).y;
 
 			//Midpoint of translation
 			const xMid = calculateCurveMidPoint(x1, y1, x2, y2, factor).x;
@@ -61,21 +62,18 @@ export async function translateArrayElement(
 			//Data for the items' path
 			const itemPathData = lineGenerator(itemPathEndPoints);
 
-			//xml namespace, not sure what this does ¯\(°_o)/¯
-			const xmlns = 'http://www.w3.org/2000/svg';
-
 			//Interpolation function
 			const interpolateSVGgroup = (t) => {
-				//Create a path SVG node which is never appended to the HTML document and is meant to be used as a helper.
+				//Create a path SVG node meant to be used as a helper.
 				let itemPath = document.createElementNS(xmlns, 'path');
 
 				//Add data attribute to the path element
 				itemPath.setAttribute('d', itemPathData);
 
-				//Get a linearly interpolation function for the parameter t that maps itself to the total length of the svg path
+				//Maps value t to the length of the svg path
 				let length = d3.interpolateNumber(0, itemPath.getTotalLength());
 
-				//Calculate the distance along the path svg at value t
+				//x, y coords along the svg path at value t
 				const { x, y } = itemPath.getPointAtLength(length(t));
 
 				return `translate(${x}, ${y})`;

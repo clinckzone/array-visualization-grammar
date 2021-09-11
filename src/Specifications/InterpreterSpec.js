@@ -28,9 +28,12 @@ export class InterpreterSpec {
 	}
 
 	async interpret() {
-		//Based on the data, create an array diagram
 		const arrayProp = Object.create(ArrayProp);
-		arrayProp.label = this.data.name;
+		arrayProp.name = this.data.name;
+		arrayProp.label = this.style.theme.label;
+		arrayProp.container = this.style.theme.container;
+		arrayProp.index = this.style.theme.index;
+		arrayProp.item = this.style.theme.item;
 
 		let arrayDiagram = new ArrayDiagram(arrayProp);
 

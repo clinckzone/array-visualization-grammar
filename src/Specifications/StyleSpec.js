@@ -58,6 +58,14 @@ export class StyleSpec {
 			this.theme.item.fontWeight !== undefined
 				? this.theme.item.fontWeight
 				: 'normal';
+		this.theme.item.itemSize =
+			this.theme.item.itemSize !== undefined
+				? this.theme.item.itemSize
+				: 30;
+		this.theme.item.padding =
+			this.theme.item.padding !== undefined
+				? this.theme.item.padding
+				: 10;
 		this.theme.item.visible =
 			this.theme.item.visible !== undefined
 				? this.theme.item.visible
