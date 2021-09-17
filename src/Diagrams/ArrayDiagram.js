@@ -1,7 +1,7 @@
 //@ts-check
 import * as d3 from 'd3';
 import { v4 as uuidv4 } from 'uuid';
-import { ArrayProp } from '../Auxillary/ArrayProp';
+import { ArrayProp } from '../Helpers/Specs/ArrayProp';
 
 export class ArrayDiagram {
 	/**
@@ -11,7 +11,8 @@ export class ArrayDiagram {
 	constructor(properties) {
 		this.properties = properties;
 		this.label = this.initializeArrayLabel();
-		this.boundary = this.initializeArrayBoundary();
+		this.container = this.initializeArrayContainer();
+		this._data = [];
 	}
 
 	set data(data) {
@@ -62,7 +63,7 @@ export class ArrayDiagram {
 		});
 
 		//Now select the svg elemnets in order
-		const selection = this.properties.svgContainer.selectAll(
+		const selection = this.properties.svg.selectAll(
 			`g.array-item-${this.properties.id}`
 		);
 
@@ -74,14 +75,18 @@ export class ArrayDiagram {
 	 * @returns {d3.Selection}
 	 */
 	initializeArrayLabel() {
-		const label = this.properties.svgContainer
+		const label = this.properties.svg
 			.append('text')
 			.attr('class', `array-label-${this.properties.id}`)
 			.attr('x', `${this.properties.position.x}`)
 			.attr('y', `${this.properties.position.y}`)
 			.text(`${this.properties.name}`)
 			.style('dominant-baseline', 'text-after-edge')
-			.style('font-size', '12px');
+			.style('font-family', this.properties.style.label['font-family'])
+			.style('font-size', this.properties.style.label['font-size'])
+			.style('font-weight', this.properties.style.label['font-weight'])
+			.style('opacity', this.properties.style.label.opacity)
+			.style('fill', this.properties.style.label.color);
 
 		return label;
 	}
@@ -90,23 +95,28 @@ export class ArrayDiagram {
 	 * Create a rect svg for the array diagram's boundary
 	 * @returns {d3.Selection}
 	 */
-	initializeArrayBoundary() {
-		const boundary = this.properties.svgContainer
+	initializeArrayContainer() {
+		const container = this.properties.svg
 			.append('rect')
 			.attr('class', `array-boundary-${this.properties.id}`)
 			.attr(
 				'height',
-				this.properties.item.itemSize + 2 * this.properties.item.padding
+				this.properties.style.item['item-size'] +
+					2 * this.properties.style.item.padding
 			)
 			.attr('x', `${this.properties.position.x}`)
 			.attr('y', `${this.properties.position.y}`)
-			.attr('rx', 0.1 * this.properties.item.itemSize)
-			.attr('ry', 0.1 * this.properties.item.itemSize)
-			.style('fill', '#fafafa')
-			.style('stroke', 'rgb(0, 0, 0, 0.05)')
-			.style('stroke-width', '1px');
+			.attr('rx', 0.1 * this.properties.style.item['item-size'])
+			.attr('ry', 0.1 * this.properties.style.item['item-size'])
+			.style('fill', this.properties.style.container.fill)
+			.style('stroke', this.properties.style.container.stroke)
+			.style(
+				'stroke-width',
+				this.properties.style.container['stroke-width']
+			)
+			.style('opacity', this.properties.style.container.opacity);
 
-		return boundary;
+		return container;
 	}
 
 	/**
@@ -118,12 +128,14 @@ export class ArrayDiagram {
 	calculateItemPosition(index) {
 		return {
 			x:
-				(this.properties.item.itemSize + this.properties.item.padding) *
+				(this.properties.style.item['item-size'] +
+					this.properties.style.item.padding) *
 					(index + 0.5) +
-				this.properties.item.padding / 2 +
+				this.properties.style.item.padding / 2 +
 				this.properties.position.x,
 			y:
-				(this.properties.item.itemSize + this.properties.item.padding) /
+				(this.properties.style.item['item-size'] +
+					this.properties.style.item.padding) /
 					2 +
 				this.properties.position.y,
 		};

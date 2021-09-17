@@ -4,6 +4,6 @@ import { ArrayDiagram } from './ArrayDiagram';
 export class PrimitiveDiagram extends ArrayDiagram {
 	constructor(properties) {
 		super(properties);
-		this.boundary.style('display', 'none');
+		this.container.style('display', 'none');
 	}
 }
