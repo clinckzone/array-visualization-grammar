@@ -6,26 +6,34 @@ module.exports = {
   entry: './src/index.js',
   output: {
     globalObject: 'self',
-		filename: '[name].bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
       {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
         test: /\.css$/,
-				use: ['style-loader', 'css-loader']
-			},
-			{
+        use: ['style-loader', 'css-loader']
+      },
+      {
         test: /\.ttf$/,
-				use: ['file-loader']
-			}
-		]
-	},
+        use: ['file-loader']
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   plugins: [
-		new MonacoWebpackPlugin({
-			languages: ['typescript', 'javascript', 'json']
-		})
-	],
+    new MonacoWebpackPlugin({
+      languages: ['typescript', 'javascript', 'json']
+    })
+  ],
   watch: true,
   cache: true
 };

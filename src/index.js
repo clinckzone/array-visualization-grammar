@@ -5,14 +5,14 @@ import { execute } from './execute';
 
 //Initialize the javascript editor
 const jsEditor = monaco.editor.create(document.getElementById('js-editor-container'), {
-	value: '//Here goes your Javascript\n',
-	language: 'javascript',
+  value: '//Here goes your Javascript\n',
+  language: 'javascript',
 });
 
 //Initialize the json editor
 const jsonEditor = monaco.editor.create(document.getElementById('json-editor-container'), {
-	value: '\n',
-	language: 'json',
+  value: '\n',
+  language: 'json',
 });
 
 //Compile script upon click
